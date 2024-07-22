@@ -1,0 +1,12 @@
+{
+	"compilerOptions": {
+		"noEmit": true,
+		"noUnusedLocals": true,
+		"skipLibCheck": true,
+		"downlevelIteration": true,
+		"lib": ["ESNext", "DOM"],
+		"moduleResolution": "Node",
+		"module": "ESNext",
+		"target": "ESNext"
+	}
+}

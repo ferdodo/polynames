@@ -1,0 +1,19 @@
+{
+	"scripts": {
+		"build": "tsc && esbuild src/main.ts --platform=node --bundle --minify --sourcemap --outfile=dist/index.js",
+		"start": "node --enable-source-maps dist/index.js"
+	},
+	"dependencies": {
+		"core": "file:../core",
+		"mariadb": "^3.3.1",
+		"sql-template-tag": "^5.2.1",
+		"ws": "^8.18.0"
+	},
+	"devDependencies": {
+		"@types/node": "^20.14.10",
+		"connection-types": "^1.0.0",
+		"esbuild": "^0.23.0",
+		"rxjs": "^7.8.1",
+		"typescript": "^5.5.3"
+	}
+}

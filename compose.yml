@@ -1,0 +1,48 @@
+services:
+  core:
+    build: core
+    depends_on:
+      - design-system
+
+  design-system:
+    build: design-system
+    ports:
+      - 7824:5173
+
+  coverage:
+    build: coverage
+    depends_on:
+      - core
+    ports:
+      - 7823:80
+
+  db:
+    image: mariadb
+    environment:
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_RANDOM_ROOT_PASSWORD: ${MARIADB_RANDOM_ROOT_PASSWORD}
+
+  back:
+    build: back
+    depends_on:
+      - core
+      - db
+    ports:
+      - 7822:3000
+    environment:
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      ROLE_SIGN_PASSPHRASE: ${ROLE_SIGN_PASSPHRASE}
+      ROLE_SIGN_SALT: ${ROLE_SIGN_SALT}
+    restart: always
+
+  front:
+    build: front
+    depends_on:
+      - core
+      - back
+    ports:
+      - 7825:5173

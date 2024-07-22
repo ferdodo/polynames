@@ -1,0 +1,38 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title> polynames design system</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script type="module" src="./src/index.ts"></script>
+	</head>
+	<body style="margin: 0;">
+		<div style="resize: both; overflow: auto; display:grid; grid-template-columns: 1fr; grid-template-rows: 1fr;">
+			<div style="grid-area: 1 / 1 / 2 / 2;">
+				<polynames-background/>
+			</div>
+			<div style="grid-area: 1 / 1 / 2 / 2; z-index: 1; max-height: 100vh; overflow-y: scroll;">
+				<polynames-title glossy="My Super" neon="Title !"></polynames-title>
+				<polynames-instruction><span>Vous etes le Maitre des mots. Envoyez un indice a l'autre joueur, et le nombre de cartes pour cet indice ! Vous avez 0 points !</span></polynames-instruction>
+				<polynames-card word="voiture"></polynames-card>
+				<polynames-card word="camion" kind="Target"></polynames-card>
+				<polynames-card word="plage" kind="Neutral"></polynames-card>
+				<polynames-card word="oiseau" kind="Trap"></polynames-card>
+				<polynames-card word="polaroid" kind="Target" selected></polynames-card>
+				<polynames-card word="samedi" kind="Neutral" selected></polynames-card>
+				<polynames-card word="canard" kind="Target" guessed></polynames-card>
+				<polynames-card word="plateau" kind="Neutral" guessed></polynames-card>
+				<polynames-button> Mon Boutton </polynames-button>
+				<polynames-input></polynames-input>
+				<polynames-join-input></polynames-join-input>
+
+				<polynames-terminal
+					title="mon terminal"
+					footer="wow ! un footer">
+					Super contenu
+				</polynames-terminal>
+
+				<polynames-point x="0" y="0">+1 Pt</polynames-point>
+			</div>
+		</div>
+	</body>
+</html>

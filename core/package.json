@@ -1,0 +1,30 @@
+{
+	"name": "core",
+	"type": "module",
+	"exports": {
+		".": "./src/index.ts",
+		"./*": "./src/*/index.ts"
+	},
+	"scripts": {
+		"build": "tsc && vitest run && biome ci ."
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.7.3",
+		"@stryker-mutator/core": "^8.2.6",
+		"@stryker-mutator/vitest-runner": "^8.2.6",
+		"@testing-library/preact": "^3.2.3",
+		"@types/node": "^20.12.7",
+		"connection-types": "^1.0.0",
+		"design-system": "file:../design-system",
+		"goober": "^2.1.14",
+		"htm": "^3.1.1",
+		"jsdom": "^24.0.0",
+		"json-schema-to-ts": "^3.1.0",
+		"jsonschema": "^1.4.1",
+		"preact": "^10.22.0",
+		"preact-observable-hooks": "^0.0.2",
+		"typescript": "^5.4.2",
+		"uid": "^2.0.2",
+		"vitest": "^1.4.0"
+	}
+}
