@@ -10,8 +10,10 @@ export function joinGame(
 		filter(Boolean),
 	);
 
-	const waitResponse = firstValueFrom(response$).catch(() => {
-		throw new Error("Failed to join game !");
+	const waitResponse = firstValueFrom(response$, {
+		defaultValue: {} as JoinGameResponse,
+	}).catch((cause) => {
+		throw new Error("Failed to join game !", { cause });
 	});
 
 	context.connection.send({
