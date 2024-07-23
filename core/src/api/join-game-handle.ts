@@ -1,13 +1,14 @@
 import type { Connection } from "connection-types";
 
 import {
+	Observable,
 	bufferCount,
 	combineLatest,
 	filter,
+	finalize,
 	groupBy,
 	map,
 	merge,
-	mergeAll,
 	mergeMap,
 	of,
 	take,
@@ -58,14 +59,37 @@ export function joinGameHandle({
 				([_connection, request]: [Connection<Message>, JoinGameRequest]) =>
 					request.game,
 				null,
-				(group$) =>
-					group$.pipe(
-						take(2),
-						map(([connection]) => connection.messages$),
-						mergeAll(),
-					),
+				(group$: Observable<[Connection<Message>, JoinGameRequest]>) =>
+					new Observable((subscriber) => {
+						let open = 0;
+
+						const sub = group$
+							.pipe(
+								tap(() => {
+									open += 1;
+								}),
+								mergeMap(([x]) =>
+									x.messages$.pipe(
+										finalize(() => {
+											open -= 1;
+
+											if (open === 0) {
+												subscriber.complete();
+											}
+										}),
+									),
+								),
+							)
+							.subscribe();
+
+						return () => {
+							sub.unsubscribe();
+						};
+					}),
 			),
 			mergeMap((joinByGame$) => joinByGame$.pipe(bufferCount(2))),
+			take(1),
+			filter(([_first, second]) => !!second),
 			mergeMap(async ([[connectionA, requestA], [connectionB, requestB]]) => {
 				const [roleA, roleB] = [
 					PlayerRole.IntuitionMaster,
