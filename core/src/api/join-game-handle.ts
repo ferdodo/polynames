@@ -65,9 +65,8 @@ export function joinGameHandle({
 						mergeAll(),
 					),
 			),
-			mergeMap((joinByGame$) => joinByGame$),
-			bufferCount(2),
-			mergeMap(async ([[connectionA, requestA], [connectionB, _requestB]]) => {
+			mergeMap((joinByGame$) => joinByGame$.pipe(bufferCount(2))),
+			mergeMap(async ([[connectionA, requestA], [connectionB, requestB]]) => {
 				const [roleA, roleB] = [
 					PlayerRole.IntuitionMaster,
 					PlayerRole.WordMaster,
