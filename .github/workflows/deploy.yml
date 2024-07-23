@@ -1,0 +1,40 @@
+name: Build and Deploy Frontend
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: build
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Compose
+        uses: ndeloof/install-compose-action@v0.0.1
+        with:
+          version: v2.27.0
+
+      - run: docker compose build design-system
+      - run: docker compose build core
+
+      - run: VITE_BACK_DOMAIN=${{ vars.VITE_BACK_DOMAIN }} VITE_WEBSOCKET_PROTOCOL=${{ vars.VITE_WEBSOCKET_PROTOCOL }} docker compose build front
+
+      - name: Extract build artifacts
+        run: |
+          CONTAINER_ID=$(docker create polynames-front)
+          mkdir -p ./polynames/front
+          docker cp $CONTAINER_ID:/polynames/front/dist ./polynames/front
+          docker rm $CONTAINER_ID
+
+      - name: 🚀 Deploy
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: ./polynames/front/dist

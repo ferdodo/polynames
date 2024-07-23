@@ -7,7 +7,11 @@ import "design-system";
 
 async function main() {
 	const [connection] = await Promise.all([
-		createWsClient("ws", 7822, "localhost"),
+		createWsClient(
+			import.meta.env.VITE_WEBSOCKET_PROTOCOL,
+			7822,
+			import.meta.env.VITE_BACK_DOMAIN,
+		),
 		prefetchFonts(),
 	]);
 

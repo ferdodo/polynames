@@ -22,7 +22,7 @@ services:
       MARIADB_DATABASE: ${MARIADB_DATABASE}
       MARIADB_USER: ${MARIADB_USER}
       MARIADB_PASSWORD: ${MARIADB_PASSWORD}
-      MARIADB_RANDOM_ROOT_PASSWORD: ${MARIADB_RANDOM_ROOT_PASSWORD}
+      MARIADB_RANDOM_ROOT_PASSWORD: yes
 
   back:
     build: back
@@ -40,7 +40,14 @@ services:
     restart: always
 
   front:
-    build: front
+    build:
+      context: front
+      args:
+        VITE_BACK_DOMAIN: ${VITE_BACK_DOMAIN}
+        VITE_WEBSOCKET_PROTOCOL: ${VITE_WEBSOCKET_PROTOCOL}
+    environment:
+      VITE_BACK_DOMAIN: ${VITE_BACK_DOMAIN}
+      VITE_WEBSOCKET_PROTOCOL: ${VITE_WEBSOCKET_PROTOCOL}
     depends_on:
       - core
       - back

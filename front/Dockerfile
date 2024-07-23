@@ -11,5 +11,9 @@ WORKDIR /polynames/front
 COPY --from=0 /polynames/front /polynames/front
 
 COPY . .
+
+ARG VITE_BACK_DOMAIN
+ARG VITE_WEBSOCKET_PROTOCOL
+
 RUN npm run build
 CMD npm run start
