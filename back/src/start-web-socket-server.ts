@@ -2,10 +2,12 @@ import { WebSocketServer } from "ws";
 import { Observable, share } from "rxjs";
 import type { Connection } from "connection-types";
 import { validateMessage } from "core";
+import { createServer } from "https";
+import { readFileSync } from "fs";
 
 export function startWebSocketServer<T>(): Observable<Connection<T>> {
 	return new Observable<Connection<T>>((connexionSubscriber) => {
-		const wss = new WebSocketServer({ port: 3000, path: "/ws" });
+		const wss = createWebSocketServer();
 
 		wss.on("connection", (ws) => {
 			const messages$ = new Observable<T>((messageSubscriber) => {
@@ -51,4 +53,24 @@ export function startWebSocketServer<T>(): Observable<Connection<T>> {
 			});
 		});
 	}).pipe(share());
+}
+
+function createWebSocketServer() {
+	let server;
+
+	switch (process.env.VITE_WEBSOCKET_PROTOCOL) {
+		case "ws":
+			return new WebSocketServer({ port: 3000, path: "/ws" });
+		case "wss":
+			server = createServer({
+				key: readFileSync("./certificates/privkey.pem"),
+				cert: readFileSync("./certificates/fullchain.pem"),
+			});
+
+			server.listen(3000);
+
+			return new WebSocketServer({ server, path: "/ws" });
+		default:
+			throw new Error("Invalid WS protocol !");
+	}
 }
