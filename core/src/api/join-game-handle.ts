@@ -87,8 +87,7 @@ export function joinGameHandle({
 						};
 					}),
 			),
-			mergeMap((joinByGame$) => joinByGame$.pipe(bufferCount(2))),
-			take(1),
+			mergeMap((joinByGame$) => joinByGame$.pipe(bufferCount(2), take(1))),
 			filter(([_first, second]) => !!second),
 			mergeMap(async ([[connectionA, requestA], [connectionB, requestB]]) => {
 				const [roleA, roleB] = [
