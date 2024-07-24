@@ -5,6 +5,7 @@ export async function createWsClient<T>(
 	wsProtocol: string,
 	wsPort: number,
 	webDomain: string,
+	connectTimeout = 500,
 ): Connection<T> {
 	const showPort =
 		(wsProtocol === "ws" && wsPort != 80) ||
@@ -21,7 +22,7 @@ export async function createWsClient<T>(
 		const timeout = setTimeout(() => {
 			reject(new Error("Connection timeout !"));
 			socket.close();
-		}, 500);
+		}, connectTimeout);
 
 		socket.onopen = () => {
 			clearTimeout(timeout);

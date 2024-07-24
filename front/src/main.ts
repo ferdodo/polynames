@@ -6,16 +6,17 @@ import { prefetchFonts } from "./prefetch-fonts";
 import "design-system";
 
 async function main() {
-	const createConnection = () =>
+	const createConnection = (timeout?: number) =>
 		createWsClient(
 			import.meta.env.VITE_WEBSOCKET_PROTOCOL,
 			7822,
 			import.meta.env.VITE_BACK_DOMAIN,
+			timeout,
 		);
 
 	const [connection] = await Promise.all([
 		createConnection().catch(() => {
-			return createConnection(); // retry once
+			return createConnection(5000); // retry once
 		}),
 		prefetchFonts(),
 	]);
