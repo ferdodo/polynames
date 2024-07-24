@@ -18,8 +18,15 @@ export async function createWsClient<T>(
 	});
 
 	const waitConnected = new Promise((resolve, reject) => {
-		socket.onopen = () => resolve(undefined);
+		const timeout = setTimeout(() => {
+			reject(new Error("Connection timeout !"));
+			socket.close();
+		}, 500);
 
+		socket.onopen = () => {
+			clearTimeout(timeout);
+			resolve(undefined);
+		};
 		waitDisconnected.finally(reject);
 	});
 
