@@ -75,14 +75,14 @@ function Waiting() {
 		gameState === GameState.IntuitionMasterTurn &&
 		role === PlayerRole.WordMaster
 	) {
-		return html`<span>Attendez que le Maitre des intuitions ai devinee les mots... </span>`;
+		return html`<span>Attendez que le Maître des intuitions ai deviné les mots... </span>`;
 	}
 
 	if (
 		gameState === GameState.WordMasterTurn &&
 		role === PlayerRole.IntuitionMaster
 	) {
-		return html`<span>Attendez que le Maitre des mots ai donnee son indice... </span>`;
+		return html`<span>Attendez que le Maître des mots ai donné un nouvel indice... </span>`;
 	}
 
 	return html`<span></span>`;
