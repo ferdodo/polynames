@@ -7,3 +7,4 @@ export { mountApp } from "./mount-app";
 export { unmountApp } from "./unmount-app";
 export { computePoints } from "./compute-points";
 export { validateMessage } from "./validate-message";
+export { takeUntilConnectionClosed } from "./take-until-connection-closed";

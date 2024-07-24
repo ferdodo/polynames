@@ -1,155 +1,85 @@
 import type { Connection } from "connection-types";
-
-import {
-	Observable,
-	bufferCount,
-	combineLatest,
-	filter,
-	finalize,
-	groupBy,
-	map,
-	merge,
-	mergeMap,
-	of,
-	take,
-	tap,
-} from "rxjs";
-
+import { filter, finalize, map, mergeMap, tap } from "rxjs";
 import type { Subscription } from "rxjs";
-import { restrictCard } from "../permissions";
-
-import type {
-	BackContext,
-	Card,
-	JoinGameRequest,
-	Message,
-	Round,
-} from "../types";
-
+import type { BackContext, JoinGameRequest, Message } from "../types";
 import { PlayerRole } from "../types";
 import { CardFactory } from "../utils";
+import { broadCastGame } from "./broadcast-game";
 
-/**
- * When a player send a join game request:
- * - The first request is grouped with another's
- *   player join request sharing the same code.
- * - Both players are provided a random signed role.
- * - Cards for this game are initialized.
- * - Game data is aggregated and broadcasted to players continuously.
- * - When both joined players have disconnected the code
- *   is available again for new connections.
- */
-export function joinGameHandle({
-	connections$,
-	cardDataMapper,
-	roundDataMapper,
-	signRole,
-}: BackContext): Subscription {
-	return connections$
+interface GameConnections {
+	connectionA: Connection<Message>;
+	connectionB?: Connection<Message>;
+}
+
+export function joinGameHandle(context: BackContext): Subscription {
+	const playerByGames: Record<string, GameConnections> = {};
+
+	return context.connections$
 		.pipe(
 			mergeMap((connection) =>
 				connection.messages$.pipe(
 					map((message) => message.joinGameRequest),
 					filter(Boolean),
-					take(1),
-					map((request) => [connection, request]),
-				),
-			),
-			groupBy(
-				([_connection, request]: [Connection<Message>, JoinGameRequest]) =>
-					request.game,
-				null,
-				(group$: Observable<[Connection<Message>, JoinGameRequest]>) =>
-					new Observable((subscriber) => {
-						let open = 0;
+					finalize(() => {
+						const gamePlayerIsIn = Object.keys(playerByGames).filter((game) => {
+							return (
+								playerByGames[game]?.connectionA === connection ||
+								playerByGames[game]?.connectionB === connection
+							);
+						});
 
-						const sub = group$
-							.pipe(
-								tap(() => {
-									open += 1;
-								}),
-								mergeMap(([x]) =>
-									x.messages$.pipe(
-										finalize(() => {
-											open -= 1;
+						for (const game of gamePlayerIsIn) {
+							if (playerByGames[game]?.connectionB) {
+								context.cardDataMapper.destroy({ game }).catch(console.error);
+								context.roundDataMapper.destroy({ game }).catch(console.error);
+							}
 
-											if (open === 0) {
-												subscriber.complete();
-											}
-										}),
-									),
-								),
-							)
-							.subscribe();
-
-						return () => {
-							sub.unsubscribe();
-						};
+							delete playerByGames[game];
+						}
 					}),
-			),
-			mergeMap((joinByGame$) => joinByGame$.pipe(bufferCount(2), take(1))),
-			filter(([_first, second]) => !!second),
-			mergeMap(async ([[connectionA, requestA], [connectionB, requestB]]) => {
-				const [roleA, roleB] = [
-					PlayerRole.IntuitionMaster,
-					PlayerRole.WordMaster,
-				].sort(() => Math.random() - 0.5);
+					tap(async (request: JoinGameRequest) => {
+						const game = request.game;
 
-				connectionA.send({
-					joinGameResponse: {
-						role: roleA,
-						signature: await signRole(requestA.game, roleA),
-					},
-				});
+						if (!playerByGames[game]) {
+							playerByGames[game] = { connectionA: connection };
+						} else if (!playerByGames[game].connectionB) {
+							playerByGames[game].connectionB = connection;
+							const connectionA = playerByGames[game].connectionA;
+							const connectionB = playerByGames[game].connectionB;
 
-				connectionB.send({
-					joinGameResponse: {
-						role: roleB,
-						signature: await signRole(requestA.game, roleB),
-					},
-				});
+							const [roleA, roleB] = [
+								PlayerRole.IntuitionMaster,
+								PlayerRole.WordMaster,
+							].sort(() => Math.random() - 0.5);
 
-				await cardDataMapper.destroy({ game: requestA.game });
-				await roundDataMapper.destroy({ game: requestA.game });
-				await cardDataMapper.create([...new CardFactory(requestA.game)]);
-				const cardsA = await cardDataMapper.read({ game: requestA.game });
-				const cardsB = await cardDataMapper.read({ game: requestA.game });
+							connectionA.send({
+								joinGameResponse: {
+									role: roleA,
+									signature: await context.signRole(game, roleA),
+								},
+							});
 
-				return of(
-					[connectionA, requestA, roleA, cardsA],
-					[connectionB, requestA, roleB, cardsB],
-				);
-			}),
-			mergeMap((x) => x),
-			mergeMap(
-				([connection, request, role, cards]: [
-					Connection<Message>,
-					JoinGameRequest,
-					PlayerRole,
-					Card[],
-				]) => {
-					return combineLatest(
-						of(connection),
-						of(role),
-						merge(cardDataMapper.observe({ game: request.game }), of(cards)),
-						merge(roundDataMapper.observe({ game: request.game }), of([])),
-					);
-				},
-			),
-			tap(
-				([connection, role, cards, rounds]: [
-					Connection<Message>,
-					PlayerRole,
-					Card[],
-					Round[],
-				]) => {
-					connection.send({
-						broadcastGame: {
-							cards: restrictCard(role, rounds, cards),
-							rounds,
-						},
-					});
-				},
+							connectionB.send({
+								joinGameResponse: {
+									role: roleB,
+									signature: await context.signRole(game, roleB),
+								},
+							});
+
+							await context.cardDataMapper.destroy({ game });
+							await context.roundDataMapper.destroy({ game });
+							await context.cardDataMapper.create([...new CardFactory(game)]);
+
+							broadCastGame(connectionA, context, game, roleA).catch(
+								console.error,
+							);
+
+							broadCastGame(connectionB, context, game, roleB).catch(
+								console.error,
+							);
+						}
+					}),
+				),
 			),
 		)
 		.subscribe();
