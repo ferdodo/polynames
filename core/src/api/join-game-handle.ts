@@ -9,6 +9,7 @@ import { broadCastGame } from "./broadcast-game";
 interface GameConnections {
 	connectionA: Connection<Message>;
 	connectionB?: Connection<Message>;
+	onePlayerLeft?: boolean;
 }
 
 export function joinGameHandle(context: BackContext): Subscription {
@@ -29,12 +30,16 @@ export function joinGameHandle(context: BackContext): Subscription {
 						});
 
 						for (const game of gamePlayerIsIn) {
-							if (playerByGames[game]?.connectionB) {
+							if (
+								playerByGames[game]?.onePlayerLeft ||
+								!playerByGames[game]?.connectionB
+							) {
 								context.cardDataMapper.destroy({ game }).catch(console.error);
 								context.roundDataMapper.destroy({ game }).catch(console.error);
+								delete playerByGames[game];
+							} else {
+								playerByGames[game].onePlayerLeft = true;
 							}
-
-							delete playerByGames[game];
 						}
 					}),
 					tap(async (request: JoinGameRequest) => {
