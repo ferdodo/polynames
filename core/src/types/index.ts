@@ -29,3 +29,4 @@ export type { FrontStateStorage } from "./front-state-storage";
 export type { DataMapper } from "./data-mapper";
 export type { GiveHintRequest } from "./give-hint-request";
 export type { HandGuessRequest } from "./hand-guess-request";
+export type { TestContext } from "./test-context";
