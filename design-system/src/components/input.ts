@@ -181,7 +181,7 @@ const template = createTemplate(html`
         <section className="webdesigntuts-workshop">
                 <input id="hintinput" type="text" placeholder="Tapez un indice" style="width: 7.8rem"/>		    	
                 <input id="countinput" type="text" placeholder="Nombre de mots" style="width: 8rem"/>
-                <button>Search</button>
+                <button>Envoyer</button>
         </section>
 `);
 
