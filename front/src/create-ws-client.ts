@@ -1,11 +1,10 @@
 import { Observable, share } from "rxjs";
 import { Connection } from "connection-types";
 
-export async function createWsClient<T>(
+async function _createWsClient<T>(
 	wsProtocol: string,
 	wsPort: number,
 	webDomain: string,
-	connectTimeout = 500,
 ): Connection<T> {
 	const showPort =
 		(wsProtocol === "ws" && wsPort != 80) ||
@@ -22,7 +21,7 @@ export async function createWsClient<T>(
 		const timeout = setTimeout(() => {
 			reject(new Error("Connection timeout !"));
 			socket.close();
-		}, connectTimeout);
+		}, 1000);
 
 		socket.onopen = () => {
 			clearTimeout(timeout);
@@ -70,3 +69,20 @@ export async function createWsClient<T>(
 		},
 	};
 }
+
+function retryStrategy(fn) {
+	let count = 0;
+
+	return async function retry(...args) {
+		for (let i = 0; i < 30; i++) {
+			try {
+				return await fn(...args);
+			} catch (error) {
+				console.error(`Retry ${count++}: ${error.message}`);
+				await new Promise((resolve) => setTimeout(resolve, 1000));
+			}
+		}
+	};
+}
+
+export const createWsClient = retryStrategy(_createWsClient);
