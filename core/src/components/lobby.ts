@@ -19,8 +19,8 @@ export function Lobby() {
 	const [sentJoinGame, setSentJoinGame] = useState(false);
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [messages, setMessages] = useState(generateWaitingMessages());
-
 	const [waitingText, setText] = useState("Attente de l'autre joueur...");
+	const [errorText, setErrorText] = useState("");
 
 	function setGame(game) {
 		context.frontStateStorage.save({ game });
@@ -45,8 +45,14 @@ export function Lobby() {
 
 	const handleClickJoinGame = useCallback(async () => {
 		setSentJoinGame(true);
-		const { signature, role } = await joinGame(context, game);
-		context.frontStateStorage.save({ signature, role });
+		const response = await joinGame(context, game);
+
+		if (response.success) {
+			const { signature, role } = response.success;
+			context.frontStateStorage.save({ signature, role });
+		} else if (response.error?.gameFull) {
+			setErrorText("La partie est pleine.");
+		}
 	}, [context, game]);
 
 	useCustomEventEffect("polynamesinput", joinInput, setGame);
@@ -56,10 +62,16 @@ export function Lobby() {
 		return html`<span></span>`;
 	}
 
+	if (errorText) {
+		return html`
+			<polynames-instruction key=${errorText}> <span>${errorText}</span> </polynames-instruction>
+		`;
+	}
+
 	if (sentJoinGame) {
 		return html`
 			<polynames-instruction>
-				${waitingText}
+				<span>${waitingText}</span>
 			</polynames-instruction>
 
 			<div style="display: grid; place-content: center;">

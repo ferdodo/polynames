@@ -12,7 +12,7 @@ export class ConnectionMockFactory {
 		return this.serverConnections.asObservable();
 	}
 
-	createClient() {
+	createClient(): [Connection<Message>, () => void] {
 		const _clientMessage$: Subject<Message> = new Subject();
 		const _serverMessage$: Subject<Message> = new Subject();
 
@@ -32,12 +32,15 @@ export class ConnectionMockFactory {
 			},
 		});
 
-		return {
-			id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
-			messages$: _clientMessage$.asObservable(),
-			send(message: Message) {
-				_serverMessage$.next(message);
+		return [
+			{
+				id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
+				messages$: _clientMessage$.asObservable(),
+				send(message: Message) {
+					_serverMessage$.next(message);
+				},
 			},
-		};
+			() => _serverMessage$.complete(),
+		];
 	}
 }

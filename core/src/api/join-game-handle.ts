@@ -21,27 +21,6 @@ export function joinGameHandle(context: BackContext): Subscription {
 				connection.messages$.pipe(
 					map((message) => message.joinGameRequest),
 					filter(Boolean),
-					finalize(() => {
-						const gamePlayerIsIn = Object.keys(playerByGames).filter((game) => {
-							return (
-								playerByGames[game]?.connectionA === connection ||
-								playerByGames[game]?.connectionB === connection
-							);
-						});
-
-						for (const game of gamePlayerIsIn) {
-							if (
-								playerByGames[game]?.onePlayerLeft ||
-								!playerByGames[game]?.connectionB
-							) {
-								context.cardDataMapper.destroy({ game }).catch(console.error);
-								context.roundDataMapper.destroy({ game }).catch(console.error);
-								delete playerByGames[game];
-							} else {
-								playerByGames[game].onePlayerLeft = true;
-							}
-						}
-					}),
 					tap(async (request: JoinGameRequest) => {
 						const game = request.game;
 
@@ -59,15 +38,19 @@ export function joinGameHandle(context: BackContext): Subscription {
 
 							connectionA.send({
 								joinGameResponse: {
-									role: roleA,
-									signature: await context.signRole(game, roleA),
+									success: {
+										role: roleA,
+										signature: await context.signRole(game, roleA),
+									},
 								},
 							});
 
 							connectionB.send({
 								joinGameResponse: {
-									role: roleB,
-									signature: await context.signRole(game, roleB),
+									success: {
+										role: roleB,
+										signature: await context.signRole(game, roleB),
+									},
 								},
 							});
 
@@ -82,6 +65,31 @@ export function joinGameHandle(context: BackContext): Subscription {
 							broadCastGame(connectionB, context, game, roleB).catch(
 								console.error,
 							);
+						} else {
+							connection.send({
+								joinGameResponse: {
+									error: { gameFull: true },
+								},
+							});
+						}
+					}),
+					finalize(() => {
+						const gamePlayerIsIn = Object.keys(playerByGames).filter((game) => {
+							return (
+								playerByGames[game].connectionA === connection ||
+								playerByGames[game].connectionB === connection
+							);
+						});
+
+						for (const game of gamePlayerIsIn) {
+							if (
+								playerByGames[game].onePlayerLeft ||
+								!playerByGames[game].connectionB
+							) {
+								delete playerByGames[game];
+							} else {
+								playerByGames[game].onePlayerLeft = true;
+							}
 						}
 					}),
 				),

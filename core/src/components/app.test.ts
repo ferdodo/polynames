@@ -5,10 +5,16 @@ import {
 	asIntuitionMasterSelectEliminatoryCard,
 	asIntuitionMasterSelectNeutralCard,
 	asIntuitionMasterSelectTargetCard,
+	asPlayerOpenPageAndJoinGame,
 	asWordMasterGiveHint,
 } from "../automations";
 
-import { withIntuitionMasterTurn, withWordMasterTurn } from "../fixtures";
+import {
+	withIntuitionMasterTurn,
+	withOnePlayerJoined,
+	withWordMasterTurn,
+} from "../fixtures";
+import { withTwoPlayersJoined } from "../fixtures/with-two-players-joined";
 import { generateLetters } from "../utils";
 
 test("Word master should give a hint", async () => {
@@ -75,4 +81,62 @@ test("Turn should change when clicking a neutral card", async () => {
 	);
 
 	stopServer();
+});
+
+test("When two players have joined, the game password is locked", async () => {
+	const context = await withTwoPlayersJoined();
+	const [app1] = await asPlayerOpenPageAndJoinGame(context);
+	const [app2] = await asPlayerOpenPageAndJoinGame(context);
+	await within(app1).findByText("La partie est pleine.");
+	await within(app2).findByText("La partie est pleine.");
+});
+
+test("When two players have joined, and leave, the game password is released", async () => {
+	const context = await withTwoPlayersJoined();
+	const otherGame = generateLetters();
+	const [disconnect1, disconnect2] = context.disconnectApps;
+	await asPlayerOpenPageAndJoinGame(context, otherGame);
+	await asPlayerOpenPageAndJoinGame(context, otherGame);
+	disconnect1();
+	disconnect2();
+	const [app1] = await asPlayerOpenPageAndJoinGame(context);
+	const [app2] = await asPlayerOpenPageAndJoinGame(context);
+	await within(app1).findByLabelText("Playground");
+	await within(app2).findByLabelText("Playground");
+	const [app] = await asPlayerOpenPageAndJoinGame(context, otherGame);
+	await within(app).findByText("La partie est pleine.");
+});
+
+test("When one player join and leave, two other can join", async () => {
+	const context = await withOnePlayerJoined();
+	const [disconnect] = context.disconnectApps;
+	disconnect();
+	const [app1] = await asPlayerOpenPageAndJoinGame(context);
+	const [app2] = await asPlayerOpenPageAndJoinGame(context);
+	await within(app1).findByLabelText("Playground");
+	await within(app2).findByLabelText("Playground");
+});
+
+test("When two players join and one leave, game is not freed until the second player leaves", async () => {
+	const context = await withTwoPlayersJoined();
+	const [disconnect1, disconnect2] = context.disconnectApps;
+	disconnect1();
+	const [app1] = await asPlayerOpenPageAndJoinGame(context);
+	await within(app1).findByText("La partie est pleine.");
+	disconnect2();
+	const [app2] = await asPlayerOpenPageAndJoinGame(context);
+	const [app3] = await asPlayerOpenPageAndJoinGame(context);
+	await within(app2).findByLabelText("Playground");
+	await within(app3).findByLabelText("Playground");
+});
+
+test("Game cleaning should not affect other games", async () => {
+	const context = await withOnePlayerJoined();
+	const [disconnect] = context.disconnectApps;
+	const otherGame = generateLetters();
+	await asPlayerOpenPageAndJoinGame(context, otherGame);
+	await asPlayerOpenPageAndJoinGame(context, otherGame);
+	disconnect();
+	const [app] = await asPlayerOpenPageAndJoinGame(context, otherGame);
+	await within(app).findByText("La partie est pleine.");
 });

@@ -6,7 +6,7 @@
 		"./*": "./src/*/index.ts"
 	},
 	"scripts": {
-		"build": "tsc && vitest run && biome ci ."
+		"build": "tsc && vitest run --sequence.concurrent --testTimeout 100 && biome ci ."
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.7.3",

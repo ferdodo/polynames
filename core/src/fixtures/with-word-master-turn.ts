@@ -23,15 +23,17 @@ export async function withWordMasterTurn(): Promise<TestContext> {
 		throw new Error("Expected two apps to be present !");
 	}
 
-	const [wordMasterApp, intuitionMasterApp] = await (async () => {
-		try {
-			await within(app1).findByPlaceholderText("Entrez un indice");
-			return [app1, app2];
-		} catch (error) {
-			await within(app2).findByPlaceholderText("Entrez un indice");
-			return [app2, app1];
-		}
-	})();
+	async function isWordMasterApp(app: HTMLElement): Promise<HTMLElement> {
+		await within(app).findByPlaceholderText("Entrez un indice");
+		return app;
+	}
+
+	const wordMasterApp = await Promise.race([
+		isWordMasterApp(app1),
+		isWordMasterApp(app2),
+	]);
+
+	const intuitionMasterApp = app1 === wordMasterApp ? app2 : app1;
 
 	return {
 		...context,

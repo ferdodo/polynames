@@ -12,6 +12,7 @@ export async function withServerStarted(): Promise<TestContext> {
 		apps: [],
 		stopServer,
 		cards: [],
+		disconnectApps: [],
 		backendContext,
 		connectionFactory,
 	};

@@ -7,12 +7,13 @@ export async function withOnePlayerJoined(
 	game = generateLetters(),
 ): Promise<TestContext> {
 	const context = await withServerStarted();
-	const app = await asPlayerOpenPageAndJoinGame(context, game);
+	const [app, disconnect] = await asPlayerOpenPageAndJoinGame(context, game);
 
 	return {
 		...context,
 		game,
 		apps: [app],
+		disconnectApps: [disconnect],
 		cards: [],
 	};
 }
