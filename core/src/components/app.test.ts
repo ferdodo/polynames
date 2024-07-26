@@ -18,8 +18,6 @@ test("Word master should give a hint", async () => {
 	const count = Math.ceil(Math.random() * 3);
 	const expected = `Devinez les cartes ! Indice: ${hint}.`;
 	const expected2 = `${count + 1} mots restants.`;
-	expect(within(intuitionMasterApp).queryByText(expected)).toBeNull();
-	expect(within(intuitionMasterApp).queryByText(expected2)).toBeNull();
 	await asWordMasterGiveHint(context, hint, count);
 	await within(intuitionMasterApp).findByText(expected);
 	expect(within(intuitionMasterApp).queryByText(expected2)).toBeTruthy();

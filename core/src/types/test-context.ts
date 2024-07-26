@@ -1,8 +1,13 @@
-import type { Card } from "../types";
+import type { ConnectionMockFactory } from "../mocks";
+import type { BackContext, Card } from "../types";
 
 export interface TestContext {
-	wordMasterApp: HTMLElement;
-	intuitionMasterApp: HTMLElement;
+	game?: string;
+	apps: HTMLElement[];
+	wordMasterApp?: HTMLElement;
+	intuitionMasterApp?: HTMLElement;
 	cards: Partial<Card>[];
 	stopServer: () => void;
+	backendContext: BackContext;
+	connectionFactory: ConnectionMockFactory;
 }
