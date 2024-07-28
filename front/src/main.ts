@@ -49,5 +49,6 @@ async function main() {
 
 main().catch((cause) => {
 	document.body.innerHTML = "<span>Une erreur est survenue !</span>";
+	console.error({ cause });
 	console.error(new Error("Error occured !", { cause }));
 });
