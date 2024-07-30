@@ -7,6 +7,7 @@ import { HintPrompt } from "./hint-prompt";
 import { Instructions } from "./instructions";
 import { Lobby } from "./lobby";
 import { Points } from "./points";
+import { TurnIndicator } from "./turn-indicator";
 
 interface AppProps {
 	context: FrontContext;
@@ -37,6 +38,7 @@ export function App({ context, dataTestid }: AppProps) {
 					style="max-height: 100vh; overflow-y: auto;"
 					data-testid=${dataTestid}>
 					<polynames-title></polynames-title>
+					<${TurnIndicator} />
 					<${Instructions} />
 					<${HintPrompt} />
 					<${Lobby} />

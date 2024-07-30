@@ -9,3 +9,4 @@ import "./title";
 import "./instruction";
 import "./point";
 import "./font-prefetch";
+import "./turn-indicator";
