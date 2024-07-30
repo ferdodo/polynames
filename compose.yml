@@ -1,8 +1,15 @@
 services:
+
+  core-deps:
+    build:
+      context: core
+      target: deps
+
   core:
     build: core
     depends_on:
       - design-system
+      - core-deps
 
   design-system:
     build: design-system
@@ -24,11 +31,17 @@ services:
       MARIADB_PASSWORD: ${MARIADB_PASSWORD}
       MARIADB_RANDOM_ROOT_PASSWORD: yes
 
+  back-deps:
+    build:
+      context: back
+      target: deps
+
   back:
     build: back
     depends_on:
       - core
       - db
+      - back-deps
     ports:
       - 7822:3000
     environment:
@@ -39,6 +52,11 @@ services:
       ROLE_SIGN_SALT: ${ROLE_SIGN_SALT}
       VITE_WEBSOCKET_PROTOCOL: ${VITE_WEBSOCKET_PROTOCOL}
     restart: always
+
+  front-deps:
+    build:
+      context: front
+      target: deps
 
   front:
     build:
@@ -52,5 +70,6 @@ services:
     depends_on:
       - core
       - back
+      - front-deps
     ports:
       - 7825:5173

@@ -1,4 +1,4 @@
-FROM node
+FROM node as deps
 WORKDIR /polynames/front
 COPY package.json .
 COPY npm-shrinkwrap.json .
