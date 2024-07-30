@@ -1,5 +1,6 @@
 import type { Card, Round } from "../types";
 import { CardKind, GameState } from "../types";
+import { computeCurrentRound } from "./compute-current-round";
 
 export function computeGameState(
 	rounds: Partial<Round>[],
@@ -13,11 +14,13 @@ export function computeGameState(
 		return GameState.WordMasterTurn;
 	}
 
-	const lastRound = rounds
-		.sort((a, b) => a.position - b.position)
-		.findLast(Boolean);
+	const currentRound = computeCurrentRound(rounds);
 
-	if (!lastRound?.cards?.length) {
+	if (currentRound.skip) {
+		return GameState.WordMasterTurn;
+	}
+
+	if (!currentRound?.cards?.length) {
 		return GameState.IntuitionMasterTurn;
 	}
 
@@ -29,15 +32,15 @@ export function computeGameState(
 		return GameState.Finished;
 	}
 
-	if (lastRound?.cards?.some((card) => card.kind === CardKind.Eliminatory)) {
+	if (currentRound?.cards?.some((card) => card.kind === CardKind.Eliminatory)) {
 		return GameState.Finished;
 	}
 
-	if (lastRound?.cards?.some((card) => card.kind === CardKind.Neutral)) {
+	if (currentRound?.cards?.some((card) => card.kind === CardKind.Neutral)) {
 		return GameState.WordMasterTurn;
 	}
 
-	if (lastRound?.cards?.length > lastRound.count) {
+	if (currentRound?.cards?.length > currentRound.count) {
 		return GameState.WordMasterTurn;
 	}
 

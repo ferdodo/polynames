@@ -5,6 +5,7 @@ import {
 	asIntuitionMasterSelectEliminatoryCard,
 	asIntuitionMasterSelectNeutralCard,
 	asIntuitionMasterSelectTargetCard,
+	asIntuitionMasterSkipRound,
 	asPlayerOpenPageAndJoinGame,
 	asWordMasterGiveHint,
 } from "../automations";
@@ -14,6 +15,7 @@ import {
 	withOnePlayerJoined,
 	withWordMasterTurn,
 } from "../fixtures";
+
 import { withTwoPlayersJoined } from "../fixtures/with-two-players-joined";
 import { generateLetters } from "../utils";
 
@@ -23,7 +25,7 @@ test("Word master should give a hint", async () => {
 	const hint = generateLetters();
 	const count = Math.ceil(Math.random() * 3);
 	const expected = `Devinez les cartes ! Indice: ${hint}.`;
-	const expected2 = `${count + 1} mots restants.`;
+	const expected2 = `${count} mots restants.`;
 	await asWordMasterGiveHint(context, hint, count);
 	await within(intuitionMasterApp).findByText(expected);
 	expect(within(intuitionMasterApp).queryByText(expected2)).toBeTruthy();
@@ -35,7 +37,7 @@ test("Intuition master should select a target word", async () => {
 	const count = Math.ceil(Math.random() * 3);
 	const context = await withIntuitionMasterTurn(hint, count);
 	const { intuitionMasterApp, stopServer } = context;
-	await within(intuitionMasterApp).findByText(`${count + 1} mots restants.`);
+	await within(intuitionMasterApp).findByText(`${count} mots restants.`);
 	await asIntuitionMasterSelectTargetCard(context);
 	await within(intuitionMasterApp).findByText(`${count} mots restants.`);
 	stopServer();
@@ -46,11 +48,15 @@ test("Game should end after selecting 8 target word", async () => {
 	const count = 7;
 	const context = await withIntuitionMasterTurn(hint, count);
 	const { intuitionMasterApp, stopServer } = context;
+	const targetWords = context.cards.map((card) => card.word)[Symbol.iterator]();
 
-	for (let i = 8; i > 0; i--) {
+	for (let i = 7; i > 0; i--) {
 		await within(intuitionMasterApp).findByText(`${i} mots restants.`);
-		await asIntuitionMasterSelectTargetCard(context);
+		await asIntuitionMasterSelectTargetCard(context, targetWords.next().value);
 	}
+
+	await within(intuitionMasterApp).findByText("Mot bonus !");
+	await asIntuitionMasterSelectTargetCard(context, targetWords.next().value);
 
 	await within(intuitionMasterApp).findByText(
 		"La partie est finie ! Vous avez 92 points !",
@@ -139,4 +145,16 @@ test("Game cleaning should not affect other games", async () => {
 	disconnect();
 	const [app] = await asPlayerOpenPageAndJoinGame(context, otherGame);
 	await within(app).findByText("La partie est pleine.");
+});
+
+test("Intuition master skipping round shall give hand to Word master", async () => {
+	const context = await withIntuitionMasterTurn();
+	const { intuitionMasterApp, stopServer } = context;
+	await asIntuitionMasterSkipRound(context);
+
+	await within(intuitionMasterApp).findByText(
+		"Attendez que le Maître des mots ai donné un nouvel indice...",
+	);
+
+	stopServer();
 });

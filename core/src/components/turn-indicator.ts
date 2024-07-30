@@ -12,10 +12,7 @@ export function TurnIndicator() {
 		(role === PlayerRole.WordMaster && gameState === GameState.WordMasterTurn)
 	) {
 		return html`
-			<div style="padding-top: 4rem; display: grid; place-content: center;">
-				<polynames-turn-indicator style="width: 5rem;">
-				</polynames-turn-indicator>
-			</div>
+			<polynames-turn-indicator style="width: 5rem;"></polynames-turn-indicator>
 		`;
 	}
 }

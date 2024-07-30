@@ -2,8 +2,8 @@ import type { Subscription } from "rxjs";
 import { filter, map, mergeMap, tap } from "rxjs";
 import { uid } from "uid";
 import type { BackContext } from "../types";
-import { GameState, PlayerRole } from "../types";
-import { computeGameState } from "../utils";
+import { CardKind, GameState, PlayerRole } from "../types";
+import { computeCurrentRound, computeGameState } from "../utils";
 
 export function giveHintHandle({
 	connections$,
@@ -28,17 +28,21 @@ export function giveHintHandle({
 						const rounds = await roundDataMapper.read({ game });
 						const gameState = computeGameState(rounds, cards);
 
+						const foundCards =
+							rounds
+								.flatMap((round) => round.cards || [])
+								.filter((card) => card.kind === CardKind.Target) || [];
+
 						if (gameState === GameState.WordMasterTurn) {
-							const round = rounds
-								.sort((a, b) => a.position - b.position)
-								.findLast(Boolean);
+							const round = computeCurrentRound(rounds);
 
 							await roundDataMapper.create({
 								id: uid(),
 								game,
 								hint,
-								count,
+								count: Math.min(7 - foundCards.length, count),
 								position: round ? round.position + 1 : 1,
+								skip: false,
 							});
 						}
 					}),

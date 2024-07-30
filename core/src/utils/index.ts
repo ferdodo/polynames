@@ -9,3 +9,5 @@ export { computePoints } from "./compute-points";
 export { validateMessage } from "./validate-message";
 export { takeUntilConnectionClosed } from "./take-until-connection-closed";
 export { generateLetters } from "./generate-letters";
+export { sanitizeInputValue } from "./sanitize-input-value";
+export { computeCurrentRound } from "./compute-current-round";

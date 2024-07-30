@@ -11,6 +11,8 @@ import {
 import { joinGame } from "../api";
 import { appContext } from "../app-context";
 import { useCustomEventEffect, useFrontState } from "../hooks";
+import { gameSchema } from "../types";
+import { sanitizeInputValue } from "../utils";
 
 export function Lobby() {
 	const context = useContext(appContext);
@@ -22,8 +24,15 @@ export function Lobby() {
 	const [waitingText, setText] = useState("Attente de l'autre joueur...");
 	const [errorText, setErrorText] = useState("");
 
-	function setGame(game) {
+	function setGame(value) {
+		const game = sanitizeInputValue(
+			new RegExp(gameSchema.pattern, "u"),
+			gameSchema.maxLength,
+			value,
+		);
+
 		context.frontStateStorage.save({ game });
+		joinInput.current.setAttribute("passvalue", game);
 	}
 
 	useEffect(() => {

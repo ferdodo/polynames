@@ -187,6 +187,10 @@ const template = createTemplate(html`
 `);
 
 class JoinInput extends HTMLElement {
+	static get observedAttributes() {
+		return ["passvalue"];
+	}
+
 	constructor() {
 		super();
 		this.attachShadow({ mode: "open" });
@@ -217,6 +221,21 @@ class JoinInput extends HTMLElement {
 		button.addEventListener("click", (event) => {
 			this.dispatchEvent(new CustomEvent("polynamesclickbutton"));
 		});
+	}
+
+	attributeChangedCallback(name: string, _oldValue: string, newValue: string) {
+		if (this.shadowRoot && name === "passvalue") {
+			const shadowRoot = getShadowRoot(this);
+			const input = shadowRoot.querySelector("#hintinput") as HTMLInputElement;
+
+			if (!input) {
+				throw new Error("Input not found");
+			}
+
+			if (input.value !== newValue) {
+				input.value = newValue;
+			}
+		}
 	}
 }
 

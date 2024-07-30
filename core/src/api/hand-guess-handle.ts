@@ -2,7 +2,7 @@ import type { Subscription } from "rxjs";
 import { filter, map, mergeMap, tap } from "rxjs";
 import type { BackContext } from "../types";
 import { GameState, PlayerRole } from "../types";
-import { computeGameState } from "../utils";
+import { computeCurrentRound, computeGameState } from "../utils";
 
 export function handGuessHandle({
 	connections$,
@@ -26,12 +26,23 @@ export function handGuessHandle({
 						const currentCards = await cardDataMapper.read({ game });
 						const rounds = await roundDataMapper.read({ game });
 						const gameState = computeGameState(rounds, currentCards);
+						const round = computeCurrentRound(rounds);
 
-						const round = rounds
-							.sort((a, b) => a.position - b.position)
-							.findLast(Boolean);
+						const cardsAlreadyGuessed = rounds.some((round) => {
+							if (!round.cards) {
+								return false;
+							}
 
-						if (gameState === GameState.IntuitionMasterTurn && round) {
+							return round.cards.some((c) =>
+								cards.some((c2) => c2.word === c.word),
+							);
+						});
+
+						if (
+							gameState === GameState.IntuitionMasterTurn &&
+							round &&
+							!cardsAlreadyGuessed
+						) {
 							await roundDataMapper.update(
 								{
 									game,

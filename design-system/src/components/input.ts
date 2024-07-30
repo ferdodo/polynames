@@ -179,13 +179,17 @@ const template = createTemplate(html`
 
 	</style>
         <section className="webdesigntuts-workshop">
-                <input id="hintinput" type="text" placeholder="Tapez un indice" style="width: 7.8rem"/>		    	
-                <input id="countinput" type="text" placeholder="Nombre de mots" style="width: 8rem"/>
+                <input id="hintinput" type="text" placeholder="Tapez un indice" style="width: 7.8rem"/>	
+                <input id="countinput" type="text" placeholder="Nombre de mots" pattern="^[0-9]*$" style="width: 8rem"/>
                 <button>Envoyer</button>
         </section>
 `);
 
 class PolynamesInput extends HTMLElement {
+	static get observedAttributes() {
+		return ["hintvalue", "countvalue"];
+	}
+
 	async connectedCallback() {
 		this.attachShadow({ mode: "open" });
 		const shadowRoot = getShadowRoot(this);
@@ -225,6 +229,26 @@ class PolynamesInput extends HTMLElement {
 		button.addEventListener("click", (event) => {
 			this.dispatchEvent(new CustomEvent("polynamesclickbutton"));
 		});
+	}
+
+	attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+		if (name === "hintvalue") {
+			const input = this.shadowRoot?.querySelector(
+				"#hintinput",
+			) as HTMLInputElement;
+
+			if (input && input.value !== newValue) {
+				input.value = newValue;
+			}
+		} else if (name === "countvalue") {
+			const input = this.shadowRoot?.querySelector(
+				"#countinput",
+			) as HTMLInputElement;
+
+			if (input && input.value !== newValue) {
+				input.value = newValue;
+			}
+		}
 	}
 }
 

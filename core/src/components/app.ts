@@ -7,6 +7,7 @@ import { HintPrompt } from "./hint-prompt";
 import { Instructions } from "./instructions";
 import { Lobby } from "./lobby";
 import { Points } from "./points";
+import { SkipRound } from "./skip-round";
 import { TurnIndicator } from "./turn-indicator";
 
 interface AppProps {
@@ -38,9 +39,14 @@ export function App({ context, dataTestid }: AppProps) {
 					style="max-height: 100vh; overflow-y: auto;"
 					data-testid=${dataTestid}>
 					<polynames-title></polynames-title>
-					<${TurnIndicator} />
 					<${Instructions} />
-					<${HintPrompt} />
+
+					<div style="display: flex; justify-content: center;">
+						<${TurnIndicator} />
+						<${SkipRound} />
+						<${HintPrompt} />
+					</div>
+
 					<${Lobby} />
 					<${Board} />
 					<${Points} />

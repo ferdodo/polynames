@@ -7,4 +7,5 @@ export interface Round {
 	count: number;
 	hint: string;
 	cards?: Partial<Card>[];
+	skip: boolean;
 }

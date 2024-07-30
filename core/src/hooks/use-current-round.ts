@@ -1,8 +1,8 @@
 import { useGame } from "../hooks";
 import type { Round } from "../types";
+import { computeCurrentRound } from "../utils";
 
-export function useCurrentRound(): Round {
+export function useCurrentRound(): Partial<Round> {
 	const { rounds } = useGame();
-
-	return rounds.sort((a, b) => a.position - b.position).findLast(Boolean);
+	return computeCurrentRound(rounds);
 }

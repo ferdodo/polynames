@@ -4,11 +4,13 @@ import type {
 	HandGuessRequest,
 	JoinGameRequest,
 	JoinGameResponse,
+	SkipRoundRequest,
 } from ".";
 
 import { giveHintRequestSchema } from "./give-hint-request";
 import { handGuessRequestSchema } from "./hand-guess-request";
 import { joinGameRequestSchema } from "./join-game-request";
+import { skipRoundRequestSchema } from "./skip-round-request";
 
 export interface Message extends IncomingMessage {
 	joinGameResponse?: JoinGameResponse;
@@ -19,6 +21,7 @@ export interface IncomingMessage {
 	giveHintRequest?: GiveHintRequest;
 	joinGameRequest?: JoinGameRequest;
 	handGuessRequest?: HandGuessRequest;
+	skipRoundRequest?: SkipRoundRequest;
 }
 
 export const messageSchema = {
@@ -27,6 +30,7 @@ export const messageSchema = {
 		giveHintRequest: giveHintRequestSchema,
 		joinGameRequest: joinGameRequestSchema,
 		handGuessRequest: handGuessRequestSchema,
+		skipRoundRequest: skipRoundRequestSchema,
 	},
 	additionalProperties: false,
 } as const;

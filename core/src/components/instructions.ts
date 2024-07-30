@@ -7,13 +7,14 @@ import {
 	useGameState,
 } from "../hooks";
 
-import { GameState, PlayerRole } from "../types";
+import { CardKind, GameState, PlayerRole } from "../types";
 import { computePoints } from "../utils";
 
 export function Instructions() {
 	return html`
 		<polynames-instruction>
 			<${GameFinished} />
+			<${LostTurnExplanation} />
 			<${IntuitionMasterTime} />
 			<${WordMasterTime} />
 			<${LeftWords} />
@@ -67,6 +68,32 @@ function WordMasterTime() {
 	`;
 }
 
+function LostTurnExplanation() {
+	const { role } = useFrontState();
+	const gameState = useGameState();
+	const currentRound = useCurrentRound();
+	const previousRound = useGame().rounds.slice(-2)[0];
+
+	if (
+		gameState === GameState.IntuitionMasterTurn ||
+		role !== PlayerRole.IntuitionMaster ||
+		!currentRound ||
+		previousRound.skip
+	) {
+		return html`<span></span>`;
+	}
+
+	const neutralCardsPickedInLastRound = Boolean(
+		currentRound?.cards?.find((card) => card.kind === CardKind.Neutral),
+	);
+
+	if (!neutralCardsPickedInLastRound) {
+		return html`<span></span>`;
+	}
+
+	return html`<span> Zut, vous avez perdu votre tour à cause d'une carte neutre ! </span>`;
+}
+
 function Waiting() {
 	const { role } = useFrontState();
 	const gameState = useGameState();
@@ -100,6 +127,11 @@ function LeftWords() {
 		return html`<span></span>`;
 	}
 
-	const leftWords = 1 + currentRound.count - (currentRound.cards?.length || 0);
+	const leftWords = currentRound.count - (currentRound.cards?.length || 0);
+
+	if (leftWords === 0) {
+		return html`<span> Mot bonus ! </span>`;
+	}
+
 	return html`<span> ${leftWords} mots restants. </span>`;
 }

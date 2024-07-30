@@ -21,7 +21,7 @@ async function main() {
 		]),
 		roundDataMapper: createDataMapper<Round>(
 			"rounds",
-			["id", "game", "position", "count", "hint"],
+			["id", "game", "position", "count", "hint", "skip"],
 			[["cards", ["id", "game", "word", "kind"]]],
 		),
 	};
