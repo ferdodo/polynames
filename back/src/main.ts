@@ -27,8 +27,6 @@ async function main() {
 	};
 
 	startServer(backContext);
-
-	console.log("Success !");
 }
 
 main().catch((e) => {

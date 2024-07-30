@@ -8,7 +8,5 @@ export const pool = mariadb.createPool({
 	password: env.MARIADB_PASSWORD,
 	connectionLimit: 5,
 	connectTimeout: 10000,
-	logger: {
-		query: console.log,
-	},
+	// logger: { query: console.log },
 });
