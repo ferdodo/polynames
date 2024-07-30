@@ -27,7 +27,7 @@ async function _createWsClient<T>(
 			clearTimeout(timeout);
 			resolve(undefined);
 		};
-		waitDisconnected.finally(reject);
+		waitDisconnected.finally(() => reject(new Error("Connection closed !")));
 	});
 
 	const messages$ = new Observable<T>((subscriber) => {
@@ -78,7 +78,7 @@ function retryStrategy(fn) {
 			try {
 				return await fn(...args);
 			} catch (error) {
-				console.error(`Retry ${count++}: ${error.message}`);
+				console.error(`Retry ${count++}: ${error?.message}`);
 				await new Promise((resolve) => setTimeout(resolve, 1000));
 			}
 		}
