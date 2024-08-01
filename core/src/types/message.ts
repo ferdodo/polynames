@@ -1,5 +1,6 @@
 import type {
 	BroadcastGame,
+	EmitEmote,
 	GiveHintRequest,
 	HandGuessRequest,
 	JoinGameRequest,
@@ -22,6 +23,7 @@ export interface IncomingMessage {
 	joinGameRequest?: JoinGameRequest;
 	handGuessRequest?: HandGuessRequest;
 	skipRoundRequest?: SkipRoundRequest;
+	emitEmote?: EmitEmote;
 }
 
 export const messageSchema = {

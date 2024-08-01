@@ -31,3 +31,4 @@ export type { GiveHintRequest } from "./give-hint-request";
 export type { HandGuessRequest } from "./hand-guess-request";
 export type { TestContext } from "./test-context";
 export type { SkipRoundRequest } from "./skip-round-request";
+export type { EmitEmote } from "./emit-emote";
