@@ -1,8 +1,6 @@
 import type { Emote, PlayerRole } from ".";
 
-export interface EmitEmote {
+export interface BroadcastEmote {
 	role: PlayerRole;
-	game: string;
-	signature: string;
 	emote: Emote;
 }

@@ -6,6 +6,7 @@ export { messageSchema } from "./message";
 export { handGuessRequestSchema } from "./hand-guess-request";
 export { joinGameRequestSchema } from "./join-game-request";
 export { giveHintRequestSchema } from "./give-hint-request";
+export { Emote } from "./emote";
 
 export {
 	gameSchema,
@@ -32,3 +33,4 @@ export type { HandGuessRequest } from "./hand-guess-request";
 export type { TestContext } from "./test-context";
 export type { SkipRoundRequest } from "./skip-round-request";
 export type { EmitEmote } from "./emit-emote";
+export type { BroadcastEmote } from "./broadcast-emote";
