@@ -1,4 +1,5 @@
 import type {
+	BroadcastEmote,
 	BroadcastGame,
 	EmitEmote,
 	GiveHintRequest,
@@ -33,6 +34,7 @@ export const messageSchema = {
 		joinGameRequest: joinGameRequestSchema,
 		handGuessRequest: handGuessRequestSchema,
 		skipRoundRequest: skipRoundRequestSchema,
+		broadcastEmote: BroadcastEmote,
 	},
 	additionalProperties: false,
 } as const;
