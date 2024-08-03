@@ -1,4 +1,5 @@
 import { CardKind } from ".";
+import { Emote } from "./emote";
 
 export const signatureSchema = {
 	type: "string",
@@ -43,4 +44,9 @@ export const countSchema = {
 	type: "integer",
 	minimum: 1,
 	maximum: 100,
+} as const;
+
+export const emoteSchema = {
+	type: "string",
+	enum: Object.values(Emote),
 } as const;
