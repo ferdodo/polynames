@@ -1,4 +1,4 @@
-import { CardKind } from ".";
+import { CardKind, PlayerRole } from ".";
 import { Emote } from "./emote";
 
 export const signatureSchema = {
@@ -49,4 +49,9 @@ export const countSchema = {
 export const emoteSchema = {
 	type: "string",
 	enum: Object.values(Emote),
+} as const;
+
+export const roleSchema = {
+	type: "string",
+	enum: Object.values(PlayerRole),
 } as const;

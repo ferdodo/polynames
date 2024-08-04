@@ -7,8 +7,9 @@ import type {
 	JoinGameRequest,
 	JoinGameResponse,
 	SkipRoundRequest,
-} from ".";
+} from "../types";
 
+import { emitEmoteSchema } from "./emit-emote";
 import { giveHintRequestSchema } from "./give-hint-request";
 import { handGuessRequestSchema } from "./hand-guess-request";
 import { joinGameRequestSchema } from "./join-game-request";
@@ -17,6 +18,7 @@ import { skipRoundRequestSchema } from "./skip-round-request";
 export interface Message extends IncomingMessage {
 	joinGameResponse?: JoinGameResponse;
 	broadcastGame?: BroadcastGame;
+	broadcastEmote?: BroadcastEmote;
 }
 
 export interface IncomingMessage {
@@ -34,7 +36,7 @@ export const messageSchema = {
 		joinGameRequest: joinGameRequestSchema,
 		handGuessRequest: handGuessRequestSchema,
 		skipRoundRequest: skipRoundRequestSchema,
-		broadcastEmote: BroadcastEmote,
+		emitEmoteSchema: emitEmoteSchema,
 	},
 	additionalProperties: false,
 } as const;

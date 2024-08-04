@@ -16,6 +16,8 @@ export {
 	wordSchema,
 	countSchema,
 	hintSchema,
+	roleSchema,
+	emoteSchema,
 } from "./schemas";
 
 export type { FrontContext } from "./front-context";
