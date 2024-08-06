@@ -1,13 +1,6 @@
 import { CardKind, PlayerRole } from ".";
 import { Emote } from "./emote";
 
-export const signatureSchema = {
-	type: "string",
-	minLength: 3,
-	maxLength: 300,
-	pattern: "^[a-fA-F0-9]+$",
-} as const;
-
 export const uidSchema = {
 	type: "string",
 	length: 36,
@@ -31,13 +24,6 @@ export const wordSchema = {
 export const kindSchema = {
 	type: "string",
 	enum: Object.values(CardKind),
-} as const;
-
-export const hintSchema = {
-	type: "string",
-	minLength: 3,
-	maxLength: 50,
-	pattern: "^[\\p{L}]+$",
 } as const;
 
 export const countSchema = {

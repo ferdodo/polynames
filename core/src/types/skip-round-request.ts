@@ -1,8 +1,9 @@
-import { gameSchema, signatureSchema } from "./schemas";
+import { gameSchema } from "./schemas";
+import { type Signature, signatureSchema } from "./signature";
 
 export interface SkipRoundRequest {
 	game: string;
-	signature: string;
+	signature: Signature;
 }
 
 export const skipRoundRequestSchema = {

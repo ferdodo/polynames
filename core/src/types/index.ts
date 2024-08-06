@@ -11,14 +11,15 @@ export { Emote } from "./emote";
 export {
 	gameSchema,
 	kindSchema,
-	signatureSchema,
 	uidSchema,
 	wordSchema,
 	countSchema,
-	hintSchema,
 	roleSchema,
 	emoteSchema,
 } from "./schemas";
+
+export { hintSchema } from "./hint";
+export { signatureSchema } from "./signature";
 
 export type { FrontContext } from "./front-context";
 export type { Round } from "./round";
@@ -36,3 +37,5 @@ export type { TestContext } from "./test-context";
 export type { SkipRoundRequest } from "./skip-round-request";
 export type { EmitEmote } from "./emit-emote";
 export type { BroadcastEmote } from "./broadcast-emote";
+export type { Hint } from "./hint";
+export type { Signature } from "./signature";

@@ -1,11 +1,6 @@
 import type { Card } from ".";
-import {
-	gameSchema,
-	kindSchema,
-	signatureSchema,
-	uidSchema,
-	wordSchema,
-} from "./schemas";
+import { gameSchema, kindSchema, uidSchema, wordSchema } from "./schemas";
+import { signatureSchema } from "./signature";
 
 export interface HandGuessRequest {
 	cards: Partial<Card>[];

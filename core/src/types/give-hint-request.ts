@@ -1,13 +1,11 @@
-import {
-	countSchema,
-	gameSchema,
-	hintSchema,
-	signatureSchema,
-} from "./schemas";
+import type { Hint } from "../types";
+import { hintSchema } from "./hint";
+import { countSchema, gameSchema } from "./schemas";
+import { signatureSchema } from "./signature";
 
 export interface GiveHintRequest {
 	game: string;
-	hint: string;
+	hint: Hint;
 	count: number;
 	signature: string;
 }

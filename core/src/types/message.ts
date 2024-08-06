@@ -1,3 +1,5 @@
+import { asConst } from "json-schema-to-ts";
+
 import type {
 	BroadcastEmote,
 	BroadcastGame,
@@ -29,14 +31,14 @@ export interface IncomingMessage {
 	emitEmote?: EmitEmote;
 }
 
-export const messageSchema = {
+export const messageSchema = asConst({
 	type: "object",
 	properties: {
-		giveHintRequest: giveHintRequestSchema,
+		giveHintRequest: asConst(giveHintRequestSchema),
 		joinGameRequest: joinGameRequestSchema,
 		handGuessRequest: handGuessRequestSchema,
 		skipRoundRequest: skipRoundRequestSchema,
 		emitEmoteSchema: emitEmoteSchema,
 	},
 	additionalProperties: false,
-} as const;
+});
