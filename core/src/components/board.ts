@@ -11,7 +11,7 @@ export function Board() {
 	const { cards, rounds } = useGame();
 	const context = useContext(appContext);
 	const gameState = computeGameState(rounds, cards);
-	const { role, signature, game } = useFrontState();
+	const { role } = useFrontState();
 
 	if (!cards.length) {
 		return html`<span></span>`;
@@ -22,7 +22,7 @@ export function Board() {
 			role === PlayerRole.IntuitionMaster &&
 			gameState === GameState.IntuitionMasterTurn
 		) {
-			handGuess(context, game, [card], signature);
+			handGuess(context, card);
 		}
 	}
 
