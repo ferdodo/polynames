@@ -4,6 +4,7 @@ import type { Subscription } from "rxjs";
 import type { BackContext, JoinGameRequest, Message } from "../types";
 import { PlayerRole } from "../types";
 import { CardFactory } from "../utils";
+import { broadcastEmote } from "./broadcast-emote";
 import { broadCastGame } from "./broadcast-game";
 
 interface GameConnections {
@@ -63,6 +64,10 @@ export function joinGameHandle(context: BackContext): Subscription {
 							);
 
 							broadCastGame(connectionB, context, game, roleB).catch(
+								console.error,
+							);
+
+							broadcastEmote(context, connectionA, connectionB).catch(
 								console.error,
 							);
 						} else {
