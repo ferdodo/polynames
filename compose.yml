@@ -30,6 +30,7 @@ services:
       MARIADB_USER: ${MARIADB_USER}
       MARIADB_PASSWORD: ${MARIADB_PASSWORD}
       MARIADB_RANDOM_ROOT_PASSWORD: yes
+    restart: always
 
   back-deps:
     build:
