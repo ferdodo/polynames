@@ -37,12 +37,13 @@ services:
         polynames-core: service:core
         polynames-back-deps: service:back-deps
     ports:
-      - ${VITE_BACK_PORT:?}:3000
+      - ${VITE_BACK_PORT:?}:${BACK_PORT:?}
     environment:
       ROLE_SIGN_PASSPHRASE: ${ROLE_SIGN_PASSPHRASE:?}
       ROLE_SIGN_SALT: ${ROLE_SIGN_SALT:?}
       WEBSOCKET_PROTOCOL: ${VITE_WEBSOCKET_PROTOCOL:?}
       WEB_ORIGIN: ${WEB_ORIGIN:?}
+      BACK_PORT: ${BACK_PORT:?}
     restart: always
 
   front-deps:
