@@ -1,7 +1,9 @@
 const variables = [
+	"BACK_PORT",
 	"ROLE_SIGN_PASSPHRASE",
 	"ROLE_SIGN_SALT",
 	"WEB_ORIGIN",
+	"WEBSOCKET_PROTOCOL",
 ];
 
 for (const variable of variables) {

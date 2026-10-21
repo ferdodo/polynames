@@ -1,7 +1,7 @@
 {
 	"scripts": {
 		"build": "tsc && vitest run && esbuild src/main.ts --platform=node --bundle --minify --sourcemap --outfile=dist/index.js",
-		"start": "node --enable-source-maps dist/index.js"
+		"start": "node dist/index.js"
 	},
 	"dependencies": {
 		"core": "file:../core",

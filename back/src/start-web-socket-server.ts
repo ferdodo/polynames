@@ -63,10 +63,10 @@ function verifyOrigin(info: { origin: string }): boolean {
 function createWebSocketServer() {
 	let server;
 
-	switch (process.env.VITE_WEBSOCKET_PROTOCOL) {
+	switch (env.WEBSOCKET_PROTOCOL) {
 		case "ws":
 			return new WebSocketServer({
-				port: 3000,
+				port: Number(env.BACK_PORT),
 				path: "/ws",
 				verifyClient: verifyOrigin,
 			});
@@ -76,7 +76,7 @@ function createWebSocketServer() {
 				cert: readFileSync("./certificates/fullchain.pem"),
 			});
 
-			server.listen(3000);
+			server.listen(Number(env.BACK_PORT));
 
 			return new WebSocketServer({
 				server,
