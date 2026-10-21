@@ -9,7 +9,7 @@ async function main() {
 	const [connection] = await Promise.all([
 		createWsClient(
 			import.meta.env.VITE_WEBSOCKET_PROTOCOL,
-			7822,
+			Number(import.meta.env.VITE_BACK_PORT),
 			import.meta.env.VITE_BACK_DOMAIN,
 		),
 		prefetchFonts(),

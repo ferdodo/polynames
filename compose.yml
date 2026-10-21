@@ -37,11 +37,12 @@ services:
         polynames-core: service:core
         polynames-back-deps: service:back-deps
     ports:
-      - 7822:3000
+      - ${VITE_BACK_PORT:?}:3000
     environment:
-      ROLE_SIGN_PASSPHRASE: ${ROLE_SIGN_PASSPHRASE}
-      ROLE_SIGN_SALT: ${ROLE_SIGN_SALT}
-      VITE_WEBSOCKET_PROTOCOL: ${VITE_WEBSOCKET_PROTOCOL}
+      ROLE_SIGN_PASSPHRASE: ${ROLE_SIGN_PASSPHRASE:?}
+      ROLE_SIGN_SALT: ${ROLE_SIGN_SALT:?}
+      VITE_WEBSOCKET_PROTOCOL: ${VITE_WEBSOCKET_PROTOCOL:?}
+      WEB_ORIGIN: ${WEB_ORIGIN:?}
     restart: always
 
   front-deps:
@@ -55,12 +56,17 @@ services:
       args:
         VITE_BACK_DOMAIN: ${VITE_BACK_DOMAIN}
         VITE_WEBSOCKET_PROTOCOL: ${VITE_WEBSOCKET_PROTOCOL}
+        VITE_BACK_PORT: ${VITE_BACK_PORT:?}
+        VITE_PROD_BACK_DOMAIN: ${VITE_PROD_BACK_DOMAIN:?}
+        VITE_PROD_WEBSOCKET_PROTOCOL: ${VITE_PROD_WEBSOCKET_PROTOCOL:?}
+        VITE_PROD_BACK_PORT: ${VITE_PROD_BACK_PORT:?}
       additional_contexts:
         polynames-core: service:core
         polynames-front-deps: service:front-deps
     environment:
       VITE_BACK_DOMAIN: ${VITE_BACK_DOMAIN}
       VITE_WEBSOCKET_PROTOCOL: ${VITE_WEBSOCKET_PROTOCOL}
+      VITE_BACK_PORT: ${VITE_BACK_PORT:?}
     depends_on:
       - back
     ports:

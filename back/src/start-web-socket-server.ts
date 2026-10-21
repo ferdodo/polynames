@@ -4,6 +4,7 @@ import type { Connection } from "core";
 import { validateMessage } from "core";
 import { createServer } from "https";
 import { readFileSync } from "fs";
+import { env } from "./env";
 
 export function startWebSocketServer<T>(): Observable<Connection<T>> {
 	return new Observable<Connection<T>>((connexionSubscriber) => {
@@ -55,12 +56,20 @@ export function startWebSocketServer<T>(): Observable<Connection<T>> {
 	}).pipe(share());
 }
 
+function verifyOrigin(info: { origin: string }): boolean {
+	return env.WEB_ORIGIN === "*" || info.origin === env.WEB_ORIGIN;
+}
+
 function createWebSocketServer() {
 	let server;
 
 	switch (process.env.VITE_WEBSOCKET_PROTOCOL) {
 		case "ws":
-			return new WebSocketServer({ port: 3000, path: "/ws" });
+			return new WebSocketServer({
+				port: 3000,
+				path: "/ws",
+				verifyClient: verifyOrigin,
+			});
 		case "wss":
 			server = createServer({
 				key: readFileSync("./certificates/privkey.pem"),
@@ -69,7 +78,11 @@ function createWebSocketServer() {
 
 			server.listen(3000);
 
-			return new WebSocketServer({ server, path: "/ws" });
+			return new WebSocketServer({
+				server,
+				path: "/ws",
+				verifyClient: verifyOrigin,
+			});
 		default:
 			throw new Error("Invalid WS protocol !");
 	}

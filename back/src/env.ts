@@ -1,6 +1,7 @@
 const variables = [
 	"ROLE_SIGN_PASSPHRASE",
 	"ROLE_SIGN_SALT",
+	"WEB_ORIGIN",
 ];
 
 for (const variable of variables) {
