@@ -1,4 +1,4 @@
-import type { Connection } from "connection-types";
+import type { Connection } from "../types/connection";
 import { filter, finalize, map, mergeMap, tap } from "rxjs";
 import type { Subscription } from "rxjs";
 import type { BackContext, JoinGameRequest, Message } from "../types";

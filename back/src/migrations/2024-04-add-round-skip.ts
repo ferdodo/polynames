@@ -1,7 +1,8 @@
+import type { DatabaseSync } from "node:sqlite";
 import { createTransaction } from "../create-transaction";
 
-export async function addRoundSkip(name: string) {
-	const { sql, commit, rollback } = await createTransaction();
+export async function addRoundSkip(db: DatabaseSync, name: string) {
+	const { sql, commit, rollback } = await createTransaction(db);
 
 	try {
 		await sql`

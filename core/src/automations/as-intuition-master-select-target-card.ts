@@ -5,7 +5,7 @@ import { CardKind } from "../types";
 export async function asIntuitionMasterSelectTargetCard(
 	context: TestContext,
 	word?: string,
-) {
+): Promise<void> {
 	const { intuitionMasterApp, cards } = context;
 
 	const targetCard = cards.find((card) => {

@@ -1,5 +1,6 @@
 import { css } from "goober";
 import { html } from "htm/preact";
+import type { VNode } from "preact";
 import { useContext } from "preact/hooks";
 import { handGuess } from "../api";
 import { appContext } from "../app-context";
@@ -7,7 +8,7 @@ import { useFrontState, useGame } from "../hooks";
 import { type Card, GameState, PlayerRole } from "../types";
 import { computeGameState } from "../utils";
 
-export function Board() {
+export function Board(): VNode {
 	const { cards, rounds } = useGame();
 	const context = useContext(appContext);
 	const gameState = computeGameState(rounds, cards);
@@ -17,7 +18,7 @@ export function Board() {
 		return html`<span></span>`;
 	}
 
-	function handleClickWord(card: Partial<Card>) {
+	function handleClickWord(card: Partial<Card>): void {
 		if (
 			role === PlayerRole.IntuitionMaster &&
 			gameState === GameState.IntuitionMasterTurn
@@ -26,7 +27,7 @@ export function Board() {
 		}
 	}
 
-	const showAsGuessed = (card) =>
+	const showAsGuessed = (card: Partial<Card>): boolean =>
 		role === PlayerRole.WordMaster &&
 		rounds.some((round) =>
 			round.cards?.map((card) => card.word).includes(card.word),

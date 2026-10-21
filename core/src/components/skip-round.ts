@@ -1,11 +1,12 @@
 import { html } from "htm/preact";
+import type { VNode } from "preact";
 import { useContext } from "preact/hooks";
 import { skipRoundRequest } from "../api";
 import { appContext } from "../app-context";
 import { useFrontState, useGameState } from "../hooks";
 import { GameState, PlayerRole } from "../types";
 
-export function SkipRound() {
+export function SkipRound(): VNode {
 	const context = useContext(appContext);
 	const { game, role, signature } = useFrontState();
 	const gameState = useGameState();
@@ -17,7 +18,7 @@ export function SkipRound() {
 		return html`<span></span>`;
 	}
 
-	const handleClickSkipRound = () => {
+	const handleClickSkipRound = (): void => {
 		skipRoundRequest(context, game, signature);
 	};
 

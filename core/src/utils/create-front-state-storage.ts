@@ -1,3 +1,4 @@
+import type { Observable } from "rxjs";
 import { Subject } from "rxjs";
 import type { FrontState, FrontStateStorage } from "../types";
 
@@ -10,14 +11,14 @@ export function createFrontStateStorage(): FrontStateStorage {
 	const _state$ = new Subject<FrontState>();
 
 	return {
-		read() {
+		read(): FrontState {
 			return { ...state };
 		},
-		save(newState) {
+		save(newState: Partial<FrontState>): void {
 			state = { ...state, ...newState };
 			_state$.next(state);
 		},
-		observe() {
+		observe(): Observable<FrontState> {
 			return _state$.asObservable();
 		},
 	};

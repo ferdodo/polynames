@@ -7,7 +7,7 @@ import {
 
 import type { BackContext } from "../types";
 
-export function startServer(context: BackContext) {
+export function startServer(context: BackContext): () => void {
 	const subscriptions = [
 		joinGameHandle(context),
 		giveHintHandle(context),
@@ -15,7 +15,7 @@ export function startServer(context: BackContext) {
 		skipRoundHandle(context),
 	];
 
-	return function stopServer() {
+	return function stopServer(): void {
 		for (const subscription of subscriptions) {
 			subscription.unsubscribe();
 		}

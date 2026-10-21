@@ -1,7 +1,7 @@
 import type { Round } from "../types";
 import { CardKind } from "../types";
 
-export function computePoints(rounds: Round[]) {
+export function computePoints(rounds: Round[]): number {
 	let points = 0;
 
 	for (const round of rounds) {

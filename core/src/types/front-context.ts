@@ -1,4 +1,4 @@
-import type { Connection } from "connection-types";
+import type { Connection } from "./connection";
 import type { FrontStateStorage, Message } from ".";
 
 export interface FrontContext {

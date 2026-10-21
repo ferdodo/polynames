@@ -1,5 +1,5 @@
 import { Observable, share } from "rxjs";
-import { Connection } from "connection-types";
+import type { Connection } from "core";
 
 async function _createWsClient<T>(
 	wsProtocol: string,

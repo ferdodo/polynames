@@ -1,4 +1,5 @@
 import { html } from "htm/preact";
+import type { TargetedEvent, VNode } from "preact";
 
 import {
 	useCallback,
@@ -14,7 +15,7 @@ import { useCustomEventEffect, useFrontState } from "../hooks";
 import { gameSchema } from "../types";
 import { sanitizeInputValue } from "../utils";
 
-export function Lobby() {
+export function Lobby(): VNode {
 	const context = useContext(appContext);
 	const { signature, game } = useFrontState();
 	const joinInput = useRef(null);
@@ -24,7 +25,7 @@ export function Lobby() {
 	const [waitingText, setText] = useState("Attente de l'autre joueur...");
 	const [errorText, setErrorText] = useState("");
 
-	function setGame(value) {
+	function setGame(value: string): void {
 		const game = sanitizeInputValue(
 			new RegExp(gameSchema.pattern, "u"),
 			gameSchema.maxLength,
@@ -52,7 +53,7 @@ export function Lobby() {
 		}
 	}, [currentIndex, sentJoinGame, messages]);
 
-	const handleClickJoinGame = useCallback(async () => {
+	const handleClickJoinGame = useCallback(async (): Promise<void> => {
 		setSentJoinGame(true);
 		const response = await joinGame(context, game);
 
@@ -135,7 +136,7 @@ export function Lobby() {
                 type="text"
                 value=${game}
 				placeholder="Game ID"
-                onInput=${(event) => setGame(event.target.value)}
+                onInput=${(event: TargetedEvent<HTMLInputElement>): void => setGame(event.currentTarget.value)}
             />
 
             <button onClick=${handleClickJoinGame}>Join</button>

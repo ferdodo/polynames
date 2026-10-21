@@ -3,7 +3,7 @@ import { observeGame } from "../api";
 import { appContext } from "../app-context";
 import type { BroadcastGame } from "../types";
 
-export function useGame() {
+export function useGame(): BroadcastGame {
 	const context = useContext(appContext);
 	const game$ = useMemo(() => observeGame(context), [context]);
 

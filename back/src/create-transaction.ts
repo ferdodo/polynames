@@ -1,36 +1,28 @@
-import { pool } from "./pool";
-import Sql from "sql-template-tag";
+import type { DatabaseSync } from "node:sqlite";
+import { createSql } from "./sql";
 
-export async function createTransaction() {
-	let conn = await pool.getConnection();
-	conn.beginTransaction();
+export async function createTransaction(db: DatabaseSync) {
+	let open = true;
+
+	db.exec("BEGIN");
 
 	return {
-		sql(strings: TemplateStringsArray, ...values: any[]) {
-			if (!conn) {
-				throw new Error("Transaction already committed or rolled back!");
-			}
-
-			const query = Sql(strings, ...values);
-			return conn.query(query.sql, query.values);
-		},
+		sql: createSql(db),
 		async commit() {
-			if (!conn) {
+			if (!open) {
 				throw new Error("Transaction already committed or rolled back!");
 			}
 
-			await conn.commit();
-			await conn.release();
-			conn = undefined;
+			db.exec("COMMIT");
+			open = false;
 		},
 		async rollback() {
-			if (!conn) {
+			if (!open) {
 				throw new Error("Transaction already committed or rolled back!");
 			}
 
-			await conn.rollback();
-			await conn.release();
-			conn = undefined;
+			db.exec("ROLLBACK");
+			open = false;
 		},
 	};
 }

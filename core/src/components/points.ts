@@ -1,9 +1,10 @@
 import { html } from "htm/preact";
+import type { VNode } from "preact";
 import { useEffect, useState } from "preact/hooks";
 import { useGame } from "../hooks";
 import { computePoints } from "../utils";
 
-export function Points() {
+export function Points(): VNode {
 	const [previousPoints, setPreviousPoints] = useState(0);
 	const [mouseX, setMouseX] = useState(0);
 	const [mouseY, setMouseY] = useState(0);
@@ -26,7 +27,7 @@ export function Points() {
 	}, [rounds, previousPoints, mouseX, mouseY]);
 
 	useEffect(() => {
-		const handleMouseMove = (event: MouseEvent) => {
+		const handleMouseMove = (event: MouseEvent): void => {
 			setMouseX(event.clientX);
 			setMouseY(event.clientY);
 		};

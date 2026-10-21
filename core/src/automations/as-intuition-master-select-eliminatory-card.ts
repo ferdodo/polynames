@@ -4,7 +4,7 @@ import { CardKind } from "../types";
 
 export async function asIntuitionMasterSelectEliminatoryCard(
 	context: TestContext,
-) {
+): Promise<void> {
 	const { intuitionMasterApp, cards } = context;
 	const targetCard = cards.find((card) => card.kind === CardKind.Eliminatory);
 	const target = within(intuitionMasterApp).getByText(targetCard?.word);

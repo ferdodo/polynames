@@ -1,4 +1,5 @@
-import { CardKind, PlayerRole } from ".";
+import { CardKind } from "./card-kind";
+import { PlayerRole } from "./player-role";
 import { Emote } from "./emote";
 
 export const uidSchema = {

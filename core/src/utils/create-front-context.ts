@@ -1,4 +1,5 @@
-import type { Connection } from "connection-types";
+import type { Connection } from "../types/connection";
+import type { Observable } from "rxjs";
 import { Subject } from "rxjs";
 import type { FrontContext, Message } from "../types";
 import type { FrontState } from "../types";
@@ -13,14 +14,14 @@ export function createFrontContext(
 	return {
 		connection,
 		frontStateStorage: {
-			read() {
+			read(): FrontState {
 				return { ...state };
 			},
-			save(newState) {
+			save(newState: Partial<FrontState>): void {
 				state = { ...state, ...newState };
 				_state$.next(state);
 			},
-			observe() {
+			observe(): Observable<FrontState> {
 				return _state$.asObservable();
 			},
 		},

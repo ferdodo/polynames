@@ -1,6 +1,6 @@
 import type { Card, FrontContext } from "../types";
 
-export function handGuess(context: FrontContext, card: Partial<Card>) {
+export function handGuess(context: FrontContext, card: Partial<Card>): void {
 	const { game, signature } = context.frontStateStorage.read();
 
 	if (!game) {

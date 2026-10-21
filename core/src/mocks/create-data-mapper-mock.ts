@@ -1,3 +1,4 @@
+import type { Observable } from "rxjs";
 import { Subject, mergeMap } from "rxjs";
 import type { DataMapper } from "../types";
 
@@ -40,22 +41,22 @@ export function createDataMapperMock<T extends DbRecord, U extends DbRecord>(
 
 	return {
 		read,
-		observe(query: Partial<T>) {
+		observe(query: Partial<T>): Observable<T[]> {
 			return records$.pipe(mergeMap(() => read(query)));
 		},
-		destroy(query: Partial<T>) {
+		destroy(query: Partial<T>): Promise<void> {
 			records = records.filter((record) =>
 				Object.entries(query).every(([key, value]) => record[key] === value),
 			);
 
 			return Promise.resolve();
 		},
-		create(items: T | T[]) {
+		create(items: T | T[]): Promise<void> {
 			records.push(...(Array.isArray(items) ? (items as T[]) : [items as T]));
 			records$.next(records);
 			return Promise.resolve();
 		},
-		update(query: Partial<T>, item: Partial<T>) {
+		update(query: Partial<T>, item: Partial<T>): Promise<void> {
 			const index = records.findIndex((record) =>
 				Object.entries(query).every(([key, value]) => record[key] === value),
 			);

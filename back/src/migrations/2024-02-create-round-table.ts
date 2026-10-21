@@ -1,7 +1,8 @@
+import type { DatabaseSync } from "node:sqlite";
 import { createTransaction } from "../create-transaction";
 
-export async function createRoundTable(name: string) {
-	const { sql, commit, rollback } = await createTransaction();
+export async function createRoundTable(db: DatabaseSync, name: string) {
+	const { sql, commit, rollback } = await createTransaction(db);
 
 	try {
 		await sql`
@@ -20,7 +21,7 @@ export async function createRoundTable(name: string) {
 	} catch (e) {
 		await rollback();
 
-		if (e.code === "ER_TABLE_EXISTS_ERROR") {
+		if (e.message.includes("already exists")) {
 			return;
 		}
 

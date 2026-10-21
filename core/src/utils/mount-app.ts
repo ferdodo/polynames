@@ -3,6 +3,6 @@ import { render } from "preact";
 import { App } from "../components/app";
 import type { FrontContext } from "../types";
 
-export function mountApp(target: HTMLElement, context: FrontContext) {
+export function mountApp(target: HTMLElement, context: FrontContext): void {
 	render(html`<${App} context=${context} />`, target);
 }

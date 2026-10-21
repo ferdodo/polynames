@@ -39,3 +39,4 @@ export type { EmitEmote } from "./emit-emote";
 export type { BroadcastEmote } from "./broadcast-emote";
 export type { Hint } from "./hint";
 export type { Signature } from "./signature";
+export type { Connection } from "./connection";

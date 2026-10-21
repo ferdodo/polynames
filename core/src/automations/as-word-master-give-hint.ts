@@ -5,7 +5,7 @@ export async function asWordMasterGiveHint(
 	context: TestContext,
 	hint: string,
 	count: number,
-) {
+): Promise<void> {
 	const { wordMasterApp } = context;
 
 	const hintPrompt =

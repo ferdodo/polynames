@@ -1,4 +1,4 @@
-import type { Connection } from "connection-types";
+import type { Connection } from "./connection";
 import type { Observable } from "rxjs";
 import type { Card, DataMapper, Message, PlayerRole, Round } from ".";
 

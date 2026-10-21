@@ -1,5 +1,6 @@
 import { css } from "goober";
 import { html } from "htm/preact";
+import type { VNode } from "preact";
 import { appContext } from "../app-context";
 import type { FrontContext } from "../types";
 import { Board } from "./board";
@@ -15,7 +16,7 @@ interface AppProps {
 	dataTestid: string;
 }
 
-export function App({ context, dataTestid }: AppProps) {
+export function App({ context, dataTestid }: AppProps): VNode {
 	const appContainer = css`
 		display: grid;
 		grid-template-columns: 1fr;

@@ -1,5 +1,7 @@
-import { emoteSchema, gameSchema, roleSchema, signatureSchema } from "../types";
-import type { Emote, PlayerRole } from "../types";
+import { emoteSchema, gameSchema, roleSchema } from "./schemas";
+import { signatureSchema } from "./signature";
+import type { Emote } from "./emote";
+import type { PlayerRole } from "./player-role";
 
 export interface EmitEmote {
 	role: PlayerRole;

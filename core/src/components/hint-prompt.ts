@@ -1,4 +1,5 @@
 import { html } from "htm/preact";
+import type { TargetedEvent, VNode } from "preact";
 import { useContext, useRef, useState } from "preact/hooks";
 import { giveHint } from "../api";
 import { appContext } from "../app-context";
@@ -6,7 +7,7 @@ import { useCustomEventEffect, useFrontState, useGameState } from "../hooks";
 import { GameState, PlayerRole, countSchema, hintSchema } from "../types";
 import { sanitizeInputValue } from "../utils";
 
-export function HintPrompt() {
+export function HintPrompt(): VNode {
 	const gameState = useGameState();
 	const context = useContext(appContext);
 	const [hint, setRawHint] = useState("");
@@ -14,11 +15,11 @@ export function HintPrompt() {
 	const { role, signature, game } = useFrontState();
 	const inputPrompt = useRef(null);
 
-	const handleClickGiveHint = () => {
+	const handleClickGiveHint = (): void => {
 		giveHint(context, hint, Number(count), signature, game);
 	};
 
-	function setHint(value) {
+	function setHint(value: string): void {
 		const sanitized = sanitizeInputValue(
 			new RegExp(hintSchema.pattern, "u"),
 			hintSchema.maxLength,
@@ -29,7 +30,7 @@ export function HintPrompt() {
 		inputPrompt.current.setAttribute("hintvalue", sanitized);
 	}
 
-	function setCount(value) {
+	function setCount(value: string): void {
 		const sanitized = Number.parseInt(value) || 0;
 
 		const valid =
@@ -46,10 +47,10 @@ export function HintPrompt() {
 		}
 	}
 
-	useCustomEventEffect("polynamescountinput", inputPrompt, (value) => {
+	useCustomEventEffect("polynamescountinput", inputPrompt, (value: string): void => {
 		setCount(value);
 	});
-	useCustomEventEffect("polynamesinput", inputPrompt, (value) => {
+	useCustomEventEffect("polynamesinput", inputPrompt, (value: string): void => {
 		setHint(value);
 	});
 
@@ -72,13 +73,13 @@ export function HintPrompt() {
 				type="text"
 				placeholder="Entrez un indice"
 				value=${hint}
-				onInput=${(e) => setHint(e.target.value)} />
+				onInput=${(e: TargetedEvent<HTMLInputElement>): void => setHint(e.currentTarget.value)} />
 
 			<input
 				type="number"
 				placeholder="Nombre de mots"
 				value=${count}
-				onInput=${(e) => setCount(e.target.value)} />
+				onInput=${(e: TargetedEvent<HTMLInputElement>): void => setCount(e.currentTarget.value)} />
 
 			<button
 				aria-label="Envoyer l'indice"

@@ -1,5 +1,7 @@
 import type { DataMapper } from "core";
-import { sql } from "./sql";
+import type { DatabaseSync } from "node:sqlite";
+import { createSql } from "./sql";
+import { validateId } from "./parse-row";
 import Sql, { join, bulk, raw } from "sql-template-tag";
 import { Subject, mergeMap } from "rxjs";
 
@@ -15,10 +17,13 @@ interface DbRecord {
 }
 
 export function createDataMapper<T extends DbRecord>(
+	db: DatabaseSync,
 	table: string,
 	props: (keyof T & string)[],
-	joined: [keyof T & string, string[]][] = [],
+	joined: [keyof T & string, string[]][],
+	parse: (row: Record<string, unknown>) => T,
 ): DataMapper<T> {
+	const sql = createSql(db);
 	const cardsSubject = new Subject<T[]>();
 
 	async function read(query: Partial<T>) {
@@ -61,30 +66,42 @@ export function createDataMapper<T extends DbRecord>(
 			)}
 		`;
 
-		const deduped: Record<string, T> = result.reduce((acc, record) => {
-			acc[record.id] ||= record;
+		const deduped = result.reduce<Record<string, Record<string, unknown>>>(
+			(acc, record) => {
+				const id = validateId(record.id);
+				acc[id] ||= record;
 
-			for (const [table, props] of joined) {
-				acc[record.id][table] ||= [];
+				const row = acc[id];
 
-				const fItem = props.reduce((acc, prop) => {
-					acc[prop] = record[`${table}_${prop}`];
-					return acc;
-				}, {} as any);
+				for (const [childTable, childProps] of joined) {
+					const children = Array.isArray(row[childTable])
+						? row[childTable]
+						: [];
+					row[childTable] = children;
 
-				if (Object.values(fItem).some((o) => o !== null)) {
-					acc[record.id][table].push(fItem);
+					const child = childProps.reduce<Record<string, unknown>>(
+						(childAcc, prop) => {
+							childAcc[prop] = record[`${childTable}_${prop}`];
+							return childAcc;
+						},
+						{},
+					);
+
+					if (Object.values(child).some((o) => o !== null)) {
+						children.push(child);
+					}
+
+					for (const prop of childProps) {
+						delete row[`${childTable}_${prop}`];
+					}
 				}
 
-				for (const prop of props) {
-					delete acc[record.id][`${table}_${prop}`];
-				}
-			}
+				return acc;
+			},
+			{},
+		);
 
-			return acc;
-		}, {});
-
-		return Object.values(deduped) as T[];
+		return Object.values(deduped).map(parse);
 	}
 
 	return {
@@ -107,7 +124,7 @@ export function createDataMapper<T extends DbRecord>(
 
 				const links = items.flatMap((item) => {
 					return (
-						(item[ftable] as any[])?.map((fItem) => [item.id, fItem.id]) ?? []
+						(Array.isArray(item[ftable]) ? item[ftable] : []).map((fItem) => [item.id, fItem.id])
 					);
 				});
 
@@ -124,18 +141,20 @@ export function createDataMapper<T extends DbRecord>(
 			cardsSubject.next(items);
 		},
 		async update(query: Partial<T>, item: Partial<T>) {
-			const toUpdate = await sql`
-				SELECT * FROM ${raw(table)}
-				WHERE ${join(
-					props.reduce((acc, prop) => {
-						if (query[prop]) {
-							acc.push(Sql`${raw(prop)} = ${query[prop]}`);
-						}
-						return acc;
-					}, []),
-					" AND ",
-				)}
-			`;
+			const toUpdate = (
+				await sql`
+					SELECT * FROM ${raw(table)}
+					WHERE ${join(
+						props.reduce((acc, prop) => {
+							if (query[prop]) {
+								acc.push(Sql`${raw(prop)} = ${query[prop]}`);
+							}
+							return acc;
+						}, []),
+						" AND ",
+					)}
+				`
+			).map(parse);
 
 			const update = toUpdate.map((i) =>
 				props.map((prop) => item[prop] ?? i[prop]),
@@ -157,7 +176,7 @@ export function createDataMapper<T extends DbRecord>(
 
 				const links = toUpdate.flatMap((o) => {
 					return (
-						(item[ftable] as any[])?.map((fItem) => [o.id, fItem.id]) ?? []
+						(Array.isArray(item[ftable]) ? item[ftable] : []).map((fItem) => [o.id, fItem.id])
 					);
 				});
 
@@ -171,7 +190,7 @@ export function createDataMapper<T extends DbRecord>(
 				`;
 			}
 
-			cardsSubject.next(update);
+			cardsSubject.next(toUpdate.map((i) => ({ ...i, ...item })));
 		},
 		async destroy(query: Partial<T>) {
 			await sql`

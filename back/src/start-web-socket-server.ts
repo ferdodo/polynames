@@ -1,6 +1,6 @@
 import { WebSocketServer } from "ws";
 import { Observable, share } from "rxjs";
-import type { Connection } from "connection-types";
+import type { Connection } from "core";
 import { validateMessage } from "core";
 import { createServer } from "https";
 import { readFileSync } from "fs";

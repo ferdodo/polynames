@@ -6,7 +6,7 @@ export function giveHint(
 	count: number,
 	signature: string,
 	game: string,
-) {
+): void {
 	context.connection.send({
 		giveHintRequest: {
 			hint,

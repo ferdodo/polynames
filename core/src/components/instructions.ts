@@ -1,4 +1,5 @@
 import { html } from "htm/preact";
+import type { VNode } from "preact";
 
 import {
 	useCurrentRound,
@@ -10,7 +11,7 @@ import {
 import { CardKind, GameState, PlayerRole } from "../types";
 import { computePoints } from "../utils";
 
-export function Instructions() {
+export function Instructions(): VNode {
 	return html`
 		<polynames-instruction>
 			<${GameFinished} />
@@ -23,7 +24,7 @@ export function Instructions() {
 	`;
 }
 
-function GameFinished() {
+function GameFinished(): VNode {
 	const { rounds } = useGame();
 	const gameState = useGameState();
 	const points = computePoints(rounds);
@@ -35,7 +36,7 @@ function GameFinished() {
 	return html`<span>La partie est finie ! Vous avez ${points} points ! </span>`;
 }
 
-function IntuitionMasterTime() {
+function IntuitionMasterTime(): VNode {
 	const { role } = useFrontState();
 	const gameState = useGameState();
 	const currentRound = useCurrentRound();
@@ -52,7 +53,7 @@ function IntuitionMasterTime() {
 	`;
 }
 
-function WordMasterTime() {
+function WordMasterTime(): VNode {
 	const { role } = useFrontState();
 	const gameState = useGameState();
 
@@ -68,7 +69,7 @@ function WordMasterTime() {
 	`;
 }
 
-function LostTurnExplanation() {
+function LostTurnExplanation(): VNode {
 	const { role } = useFrontState();
 	const gameState = useGameState();
 	const currentRound = useCurrentRound();
@@ -94,7 +95,7 @@ function LostTurnExplanation() {
 	return html`<span> Zut, vous avez perdu votre tour à cause d'une carte neutre ! </span>`;
 }
 
-function Waiting() {
+function Waiting(): VNode {
 	const { role } = useFrontState();
 	const gameState = useGameState();
 
@@ -115,7 +116,7 @@ function Waiting() {
 	return html`<span></span>`;
 }
 
-function LeftWords() {
+function LeftWords(): VNode {
 	const { role } = useFrontState();
 	const gameState = useGameState();
 	const currentRound = useCurrentRound();

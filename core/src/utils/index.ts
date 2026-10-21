@@ -7,6 +7,7 @@ export { mountApp } from "./mount-app";
 export { unmountApp } from "./unmount-app";
 export { computePoints } from "./compute-points";
 export { validateMessage } from "./validate-message";
+export { isCard, isRound, validateCard, validateRound } from "./validate-row";
 export { takeUntilConnectionClosed } from "./take-until-connection-closed";
 export { generateLetters } from "./generate-letters";
 export { sanitizeInputValue } from "./sanitize-input-value";

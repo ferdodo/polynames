@@ -1,4 +1,4 @@
-import type { Connection } from "connection-types";
+import type { Connection } from "../types/connection";
 import { filter, lastValueFrom, map, tap } from "rxjs";
 import type { Observable } from "rxjs";
 import type { BackContext, EmitEmote, Message } from "../types";

@@ -1,4 +1,4 @@
-import type { Connection } from "connection-types";
+import type { Connection } from "../types/connection";
 import { Subject } from "rxjs";
 import type { Observable } from "rxjs";
 import { filter } from "rxjs";
@@ -27,7 +27,7 @@ export class ConnectionMockFactory {
 					return valid;
 				}),
 			),
-			send(message: Message) {
+			send(message: Message): void {
 				_clientMessage$.next(message);
 			},
 		});
@@ -36,11 +36,11 @@ export class ConnectionMockFactory {
 			{
 				id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
 				messages$: _clientMessage$.asObservable(),
-				send(message: Message) {
+				send(message: Message): void {
 					_serverMessage$.next(message);
 				},
 			},
-			() => _serverMessage$.complete(),
+			(): void => _serverMessage$.complete(),
 		];
 	}
 }

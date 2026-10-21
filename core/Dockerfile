@@ -4,11 +4,11 @@ COPY package.json .
 COPY npm-shrinkwrap.json .
 RUN npm config set maxsockets 1
 RUN npm install
-RUN npm audit --audit-level=moderate
+RUN npm audit --audit-level=high
 
 FROM polynames-design-system
 WORKDIR /polynames/core
-COPY --from=0 /polynames/core /polynames/core
+COPY --from=polynames-core-deps /polynames/core /polynames/core
 
 COPY . .
 

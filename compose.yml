@@ -6,10 +6,11 @@ services:
       target: deps
 
   core:
-    build: core
-    depends_on:
-      - design-system
-      - core-deps
+    build:
+      context: core
+      additional_contexts:
+        polynames-design-system: service:design-system
+        polynames-core-deps: service:core-deps
 
   design-system:
     build: design-system
@@ -17,20 +18,12 @@ services:
       - 7824:5173
 
   coverage:
-    build: coverage
-    depends_on:
-      - core
+    build:
+      context: coverage
+      additional_contexts:
+        polynames-core: service:core
     ports:
       - 7823:80
-
-  db:
-    image: mariadb
-    environment:
-      MARIADB_DATABASE: ${MARIADB_DATABASE}
-      MARIADB_USER: ${MARIADB_USER}
-      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
-      MARIADB_RANDOM_ROOT_PASSWORD: yes
-    restart: always
 
   back-deps:
     build:
@@ -38,17 +31,14 @@ services:
       target: deps
 
   back:
-    build: back
-    depends_on:
-      - core
-      - db
-      - back-deps
+    build:
+      context: back
+      additional_contexts:
+        polynames-core: service:core
+        polynames-back-deps: service:back-deps
     ports:
       - 7822:3000
     environment:
-      MARIADB_DATABASE: ${MARIADB_DATABASE}
-      MARIADB_USER: ${MARIADB_USER}
-      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
       ROLE_SIGN_PASSPHRASE: ${ROLE_SIGN_PASSPHRASE}
       ROLE_SIGN_SALT: ${ROLE_SIGN_SALT}
       VITE_WEBSOCKET_PROTOCOL: ${VITE_WEBSOCKET_PROTOCOL}
@@ -65,12 +55,13 @@ services:
       args:
         VITE_BACK_DOMAIN: ${VITE_BACK_DOMAIN}
         VITE_WEBSOCKET_PROTOCOL: ${VITE_WEBSOCKET_PROTOCOL}
+      additional_contexts:
+        polynames-core: service:core
+        polynames-front-deps: service:front-deps
     environment:
       VITE_BACK_DOMAIN: ${VITE_BACK_DOMAIN}
       VITE_WEBSOCKET_PROTOCOL: ${VITE_WEBSOCKET_PROTOCOL}
     depends_on:
-      - core
       - back
-      - front-deps
     ports:
-      - 7825:5173
+      - 7825:7825

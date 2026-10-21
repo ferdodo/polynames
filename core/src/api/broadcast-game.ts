@@ -1,4 +1,4 @@
-import type { Connection } from "connection-types";
+import type { Connection } from "../types/connection";
 import { combineLatest, from, lastValueFrom, merge, tap } from "rxjs";
 import { restrictCard } from "../permissions";
 import type { BackContext, Card, Message, Round } from "../types";

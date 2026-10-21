@@ -6,4 +6,6 @@ export {
 	createFrontStateStorage,
 	unmountApp,
 	validateMessage,
+	validateCard,
+	validateRound,
 } from "./utils";
