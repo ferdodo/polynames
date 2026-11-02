@@ -1,4 +1,4 @@
-FROM node AS deps
+FROM node:slim AS deps
 WORKDIR /polynames/core
 COPY package.json .
 COPY npm-shrinkwrap.json .

@@ -1,4 +1,4 @@
-FROM node AS deps
+FROM node:slim AS deps
 WORKDIR /polynames/front
 COPY package.json .
 COPY npm-shrinkwrap.json .
@@ -20,11 +20,5 @@ ARG VITE_PROD_WEBSOCKET_PROTOCOL
 ARG VITE_PROD_BACK_PORT
 
 RUN npm run build
-
-RUN : "${VITE_PROD_BACK_DOMAIN:?}" "${VITE_PROD_WEBSOCKET_PROTOCOL:?}" "${VITE_PROD_BACK_PORT:?}" && \
-	VITE_BACK_DOMAIN=$VITE_PROD_BACK_DOMAIN \
-	VITE_WEBSOCKET_PROTOCOL=$VITE_PROD_WEBSOCKET_PROTOCOL \
-	VITE_BACK_PORT=$VITE_PROD_BACK_PORT \
-	npx vite build --outDir dist-prod
 
 CMD npm run start

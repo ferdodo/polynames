@@ -55,18 +55,15 @@ services:
     build:
       context: front
       args:
-        VITE_BACK_DOMAIN: ${VITE_BACK_DOMAIN}
-        VITE_WEBSOCKET_PROTOCOL: ${VITE_WEBSOCKET_PROTOCOL}
+        VITE_BACK_DOMAIN: ${VITE_BACK_DOMAIN:?}
+        VITE_WEBSOCKET_PROTOCOL: ${VITE_WEBSOCKET_PROTOCOL:?}
         VITE_BACK_PORT: ${VITE_BACK_PORT:?}
-        VITE_PROD_BACK_DOMAIN: ${VITE_PROD_BACK_DOMAIN:?}
-        VITE_PROD_WEBSOCKET_PROTOCOL: ${VITE_PROD_WEBSOCKET_PROTOCOL:?}
-        VITE_PROD_BACK_PORT: ${VITE_PROD_BACK_PORT:?}
       additional_contexts:
         polynames-core: service:core
         polynames-front-deps: service:front-deps
     environment:
-      VITE_BACK_DOMAIN: ${VITE_BACK_DOMAIN}
-      VITE_WEBSOCKET_PROTOCOL: ${VITE_WEBSOCKET_PROTOCOL}
+      VITE_BACK_DOMAIN: ${VITE_BACK_DOMAIN:?}
+      VITE_WEBSOCKET_PROTOCOL: ${VITE_WEBSOCKET_PROTOCOL:?}
       VITE_BACK_PORT: ${VITE_BACK_PORT:?}
     depends_on:
       - back

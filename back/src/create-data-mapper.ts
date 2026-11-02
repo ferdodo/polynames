@@ -64,6 +64,8 @@ export function createDataMapper<T extends DbRecord>(
 				}, []),
 				" AND ",
 			)}
+
+			ORDER BY ${raw(`${table}.id`)}
 		`;
 
 		const deduped = result.reduce<Record<string, Record<string, unknown>>>(
@@ -203,8 +205,7 @@ export function createDataMapper<T extends DbRecord>(
 						return acc;
 					}, []),
 					" AND ",
-				)}
-			`;
+				)}			`;
 		},
 	};
 }

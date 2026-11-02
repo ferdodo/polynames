@@ -1,4 +1,4 @@
-FROM node AS deps
+FROM node:slim AS deps
 WORKDIR /polynames/back
 RUN npm config set maxsockets 1
 COPY package.json .

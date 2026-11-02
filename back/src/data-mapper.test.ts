@@ -16,7 +16,19 @@ describe("data mappers on sqlite", () => {
 		expect(await cardDataMapper.read({ game: card.game })).toEqual([card]);
 	});
 
-	it("updates a card", async () => {
+	it("reads cards ordered by id, whatever the insertion order", async () => {
+			const { cardDataMapper } = await withTestingDataMappers();
+			const game = createCard().game;
+			const cards = ["c", "a", "b"].map((id) => ({ ...createCard(), id, game }));
+
+			await cardDataMapper.create(cards);
+
+			expect(
+				(await cardDataMapper.read({ game })).map((card) => card.id),
+			).toEqual(["a", "b", "c"]);
+		});
+
+		it("updates a card", async () => {
 		const { cardDataMapper } = await withTestingDataMappers();
 		const card = createCard();
 
